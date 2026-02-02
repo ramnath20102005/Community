@@ -1,24 +1,30 @@
 const Post = require('../models/Post');
 
-// Get all posts
+// Get all posts with auto-cleanup of expired ones
 exports.getPosts = async (req, res) => {
     try {
+        const now = new Date();
+
+        // Auto-delete expired events/posts
+        // Any post with an eventDate in the past
+        const expiredPosts = await Post.find({
+            eventDate: { $ne: null, $lt: now }
+        });
+
+        if (expiredPosts.length > 0) {
+            console.log(`[Auto-Cleanup] Deleting ${expiredPosts.length} expired posts/events`);
+            await Post.deleteMany({
+                _id: { $in: expiredPosts.map(p => p._id) }
+            });
+        }
+
         const { type } = req.query;
-        const startOfToday = new Date();
-        startOfToday.setHours(0, 0, 0, 0);
-
-        // Build filter
-        let filter = type ? { type } : {};
-
-        // Automatically hide/expire events that have already passed
-        filter = {
-            ...filter,
-            $or: [
-                { eventDate: { $exists: false } },
-                { eventDate: null },
-                { eventDate: { $gte: startOfToday } }
-            ]
-        };
+        let filter = {};
+        if (type && type !== 'ALL') {
+            if (type === 'EVENTS') filter = { type: 'EVENT' };
+            else if (type === 'JOBS') filter = { type: 'JOB_POST' };
+            else filter = { type };
+        }
 
         const posts = await Post.find(filter)
             .populate('author', 'name email role position clubName')

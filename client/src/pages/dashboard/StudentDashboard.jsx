@@ -74,7 +74,7 @@ const StudentDashboard = () => {
             <div className="main-content">
                 <div className="section-title-wrapper">
                     <h2 className="section-title">Recent Activity</h2>
-                    <Link to="/events" className="view-all-link">view all →</Link>
+                    <Link to="/general" className="view-all-link">view all →</Link>
                 </div>
 
                 {loading ? <div style={{ padding: '40px', textAlign: 'center' }}><Loader /></div> : (

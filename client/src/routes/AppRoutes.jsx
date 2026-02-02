@@ -18,21 +18,23 @@ import AlumniDashboard from "../pages/dashboard/AlumniDashboard";
 import AdminDashboard from "../pages/dashboard/AdminDashboard";
 
 // Feature Pages
-import General from "../pages/general/General";
+import EventsList from "../pages/events/EventsList";
 import CreateEvent from "../pages/events/CreateEvent";
+import JobsList from "../pages/jobs/JobsList";
 import CreateJob from "../pages/jobs/CreateJob";
 import Profile from "../pages/profile/Profile";
 import AlumniDirectory from "../pages/alumni/AlumniDirectory";
 
-// Other Pages
+import GeneralHub from "../pages/general/GeneralHub";
 import NotFound from "../pages/NotFound";
 
 // Protected Route Component
 import ProtectedRoute from "./ProtectedRoute";
 import RoleRoute from "./RoleRoute";
+import Loader from "../components/Loader";
 
 /**
- * Helper component to redirect users to their correct dashboard
+ * Helper component to redirect users to their correct entry point
  */
 const DashboardRedirect = () => {
   const { user, loading: authLoading } = useAuth();
@@ -41,14 +43,8 @@ const DashboardRedirect = () => {
   if (authLoading || roleLoading) return <Loader />;
   if (!user) return <Navigate to="/login" replace />;
 
-  switch (role) {
-    case "ADMIN":
-    case "ALUMNI":
-    case "STUDENT_EDITOR":
-    case "STUDENT":
-    default:
-      return <Navigate to="/general" replace />;
-  }
+  // User now goes to General Hub first
+  return <Navigate to="/general" replace />;
 };
 
 const AppRoutes = () => {
@@ -73,7 +69,10 @@ const AppRoutes = () => {
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
-          {/* Auto-redirect to specific dashboard */}
+          {/* General Hub - Entry Point */}
+          <Route path="/general" element={<GeneralHub />} />
+
+          {/* Auto-redirect to General Hub */}
           <Route path="/dashboard" element={<DashboardRedirect />} />
 
           {/* Student Dashboard */}
@@ -92,15 +91,16 @@ const AppRoutes = () => {
           </Route>
 
           {/* Feature Routes */}
-          <Route path="/general" element={<General />} />
+          <Route path="/events" element={<EventsList />} />
           <Route element={<RoleRoute allowedRoles={["STUDENT_EDITOR", "ALUMNI", "ADMIN"]} />}>
             <Route path="/events/create" element={<CreateEvent />} />
-            <Route path="/events/edit/:id" element={<CreateEvent />} /> {/* Reuse CreateEvent for editing */}
+            <Route path="/events/edit/:id" element={<CreateEvent />} />
           </Route>
 
+          <Route path="/jobs" element={<JobsList />} />
           <Route element={<RoleRoute allowedRoles={["ALUMNI", "ADMIN"]} />}>
             <Route path="/jobs/create" element={<CreateJob />} />
-            <Route path="/jobs/edit/:id" element={<CreateJob />} /> {/* Reuse CreateJob for editing */}
+            <Route path="/jobs/edit/:id" element={<CreateJob />} />
           </Route>
 
           <Route path="/profile" element={<Profile />} />

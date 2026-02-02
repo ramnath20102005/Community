@@ -85,7 +85,7 @@ const AlumniDashboard = () => {
                                     <h4 className="activity-title">{post.title}</h4>
                                     <p className="activity-desc">{post.content.substring(0, 120)}...</p>
                                 </div>
-                                <Link to={post.type === 'JOB_POST' ? '/jobs' : '/events'} className="btn" style={{ fontSize: '10px', padding: '10px 20px' }}>Manage</Link>
+                                <Link to="/general" className="btn" style={{ fontSize: '10px', padding: '10px 20px' }}>Manage</Link>
                             </div>
                         )) : (
                             <div className="empty-state-container">
