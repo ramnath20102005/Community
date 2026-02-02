@@ -4,7 +4,21 @@ const Post = require('../models/Post');
 exports.getPosts = async (req, res) => {
     try {
         const { type } = req.query;
-        const filter = type ? { type } : {};
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        // Build filter
+        let filter = type ? { type } : {};
+
+        // Automatically hide/expire events that have already passed
+        filter = {
+            ...filter,
+            $or: [
+                { eventDate: { $exists: false } },
+                { eventDate: null },
+                { eventDate: { $gte: startOfToday } }
+            ]
+        };
 
         const posts = await Post.find(filter)
             .populate('author', 'name email role position clubName')

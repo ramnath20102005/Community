@@ -38,7 +38,7 @@ const Login = () => {
 
             if (response && response.token) {
                 login(response.user, response.token);
-                navigate("/dashboard");
+                navigate("/general");
             }
         } catch (err) {
             console.error("Login attempt failed:", err);

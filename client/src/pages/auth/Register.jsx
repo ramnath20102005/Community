@@ -61,7 +61,7 @@ const Register = () => {
 
             setTimeout(() => {
                 register(response.user, response.token);
-                navigate("/dashboard");
+                navigate("/general");
             }, 1200);
         } catch (err) {
             console.error("Registration failed:", err);
@@ -119,7 +119,7 @@ const Register = () => {
                         )}
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '24px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
                         <div className="register-form-group">
                             <label>SECURE KEY *</label>
                             <input

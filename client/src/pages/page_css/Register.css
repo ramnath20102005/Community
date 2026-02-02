@@ -1,17 +1,23 @@
 /**
- * Register CSS - Premium Editorial Academic Design
- * Mirrored from Login aesthetic for consistency
+ * Register CSS - Compact Premium Editorial Design
+ * Optimized to fit screen without scrolling
  */
 
 .register-page {
     min-height: 100vh;
+    max-height: 100vh;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: var(--bg-ivory);
-    padding: 40px;
-    position: relative;
-    overflow: hidden;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden !important;
 }
 
 /* Watermark Background */
@@ -22,10 +28,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
     font-family: 'Playfair Display', serif;
-    font-size: 20vw;
+    font-size: 18vw;
     font-weight: 700;
     color: var(--text-charcoal);
-    opacity: 0.04;
+    opacity: 0.03;
     pointer-events: none;
     white-space: nowrap;
     z-index: 1;
@@ -34,19 +40,40 @@
 .register-card {
     background-color: var(--bg-white);
     width: 100%;
-    max-width: 650px;
-    /* Slightly wider for register form */
-    padding: 60px 50px;
+    max-width: 580px;
+    max-height: calc(100vh - 40px);
+    padding: 40px 45px;
     border: 1px solid var(--text-charcoal);
     position: relative;
     z-index: 2;
-    box-shadow: 20px 20px 0 var(--text-charcoal);
-    animation: slideUp 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: 16px 16px 0 var(--text-charcoal);
+    animation: slideUp 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-charcoal) transparent;
+}
+
+/* Custom Scrollbar for Webkit browsers */
+.register-card::-webkit-scrollbar {
+    width: 6px;
+}
+
+.register-card::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.register-card::-webkit-scrollbar-thumb {
+    background-color: var(--text-charcoal);
+    border-radius: 3px;
+}
+
+.register-card::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent-olive);
 }
 
 @keyframes slideUp {
     from {
-        transform: translateY(40px);
+        transform: translateY(30px);
         opacity: 0;
     }
 
@@ -57,50 +84,52 @@
 }
 
 .register-header {
-    margin-bottom: 48px;
+    margin-bottom: 28px;
     text-align: center;
 }
 
 .register-header h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 2.8rem;
-    letter-spacing: -1px;
-    margin-bottom: 8px;
+    font-size: 2.2rem;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
     text-transform: uppercase;
     color: var(--text-charcoal);
+    line-height: 1.1;
 }
 
 .register-header p {
     font-family: 'Inter', sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 3px;
+    letter-spacing: 2.5px;
     color: var(--text-grey);
+    margin: 0;
 }
 
 /* Form Styling */
 .register-form .register-form-group {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
 }
 
 .register-form label {
     display: block;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 8px;
+    letter-spacing: 1.8px;
+    margin-bottom: 6px;
     color: var(--text-grey);
     font-weight: 600;
 }
 
 .register-form input {
     width: 100%;
-    padding: 12px 0;
+    padding: 10px 0;
     background: transparent;
     border: none;
     border-bottom: 1px solid var(--accent-line);
     font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--text-charcoal);
     transition: all 0.3s ease;
 }
@@ -113,23 +142,23 @@
 .register-form input::placeholder {
     color: var(--text-muted);
     font-style: italic;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
 }
 
 /* Info Box for Detected Stats */
 .email-info-box {
-    margin-top: 12px;
+    margin-top: 8px;
     background: var(--bg-ivory);
-    padding: 14px;
+    padding: 10px 12px;
     border: 1px dashed var(--accent-line);
-    font-size: 13px;
-    animation: fadeIn 0.4s ease;
+    font-size: 0.7rem;
+    animation: fadeIn 0.3s ease;
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(5px);
+        transform: translateY(4px);
     }
 
     to {
@@ -140,18 +169,18 @@
 
 /* Strength Meter */
 .strength-container {
-    margin-top: 8px;
+    margin-top: 6px;
 }
 
 .strength-bar-bg {
     height: 3px;
     background: #eee;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
 }
 
 .strength-bar-fill {
     height: 100%;
-    transition: all 0.4s ease;
+    transition: all 0.3s ease;
 }
 
 /* Validation Styling */
@@ -161,26 +190,26 @@
 
 .register-error-text {
     display: block;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     color: #e03131;
-    margin-top: 6px;
-    letter-spacing: 0.5px;
+    margin-top: 5px;
+    letter-spacing: 0.4px;
 }
 
 /* Submit Button */
 .register-submit-btn {
     width: 100%;
-    padding: 18px;
+    padding: 15px;
     background-color: var(--text-charcoal);
     color: var(--bg-white);
     border: 1px solid var(--text-charcoal);
     text-transform: uppercase;
-    letter-spacing: 3px;
-    font-size: 0.8rem;
+    letter-spacing: 2.5px;
+    font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    margin-top: 24px;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    margin-top: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -189,6 +218,7 @@
 .register-submit-btn:hover:not(:disabled) {
     background-color: transparent;
     color: var(--text-charcoal);
+    transform: translateY(-2px);
 }
 
 .register-submit-btn:disabled {
@@ -198,34 +228,104 @@
 
 /* Footer Links */
 .register-footer {
-    margin-top: 32px;
+    margin-top: 20px;
     text-align: center;
 }
 
 .register-footer p {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-grey);
+    margin: 0;
 }
 
 .register-footer a {
     color: var(--text-charcoal);
     font-weight: 600;
     text-decoration: underline;
-    text-underline-offset: 4px;
+    text-underline-offset: 3px;
+    transition: opacity 0.2s;
+}
+
+.register-footer a:hover {
+    opacity: 0.7;
 }
 
 /* Responsiveness */
 @media (max-width: 767px) {
     .register-page {
-        padding: 20px 16px;
+        padding: 16px;
     }
 
     .register-card {
-        padding: 40px 24px;
-        box-shadow: 12px 12px 0 var(--text-charcoal);
+        padding: 32px 28px;
+        box-shadow: 10px 10px 0 var(--text-charcoal);
+    }
+
+    .register-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .register-header p {
+        font-size: 0.6rem;
+        letter-spacing: 2px;
+    }
+}
+
+@media (max-height: 800px) {
+    .register-card {
+        padding: 32px 40px;
+    }
+
+    .register-header {
+        margin-bottom: 20px;
     }
 
     .register-header h1 {
         font-size: 2rem;
+    }
+
+    .register-form .register-form-group {
+        margin-bottom: 14px;
+    }
+
+    .email-info-box {
+        padding: 8px 10px;
+        font-size: 0.65rem;
+    }
+
+    .register-footer {
+        margin-top: 16px;
+    }
+}
+
+@media (max-height: 700px) {
+    .register-card {
+        padding: 28px 36px;
+    }
+
+    .register-header {
+        margin-bottom: 16px;
+    }
+
+    .register-header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 4px;
+    }
+
+    .register-form .register-form-group {
+        margin-bottom: 12px;
+    }
+
+    .register-form label {
+        margin-bottom: 5px;
+    }
+
+    .register-submit-btn {
+        padding: 13px;
+        margin-top: 12px;
+    }
+
+    .register-footer {
+        margin-top: 14px;
     }
 }

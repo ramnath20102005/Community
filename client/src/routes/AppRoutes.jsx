@@ -18,9 +18,8 @@ import AlumniDashboard from "../pages/dashboard/AlumniDashboard";
 import AdminDashboard from "../pages/dashboard/AdminDashboard";
 
 // Feature Pages
-import EventsList from "../pages/events/EventsList";
+import General from "../pages/general/General";
 import CreateEvent from "../pages/events/CreateEvent";
-import JobsList from "../pages/jobs/JobsList";
 import CreateJob from "../pages/jobs/CreateJob";
 import Profile from "../pages/profile/Profile";
 import AlumniDirectory from "../pages/alumni/AlumniDirectory";
@@ -44,14 +43,11 @@ const DashboardRedirect = () => {
 
   switch (role) {
     case "ADMIN":
-      return <Navigate to="/admin/dashboard" replace />;
     case "ALUMNI":
-      return <Navigate to="/alumni/dashboard" replace />;
     case "STUDENT_EDITOR":
     case "STUDENT":
-      return <Navigate to="/student/dashboard" replace />;
     default:
-      return <Navigate to="/student/dashboard" replace />;
+      return <Navigate to="/general" replace />;
   }
 };
 
@@ -96,13 +92,12 @@ const AppRoutes = () => {
           </Route>
 
           {/* Feature Routes */}
-          <Route path="/events" element={<EventsList />} />
+          <Route path="/general" element={<General />} />
           <Route element={<RoleRoute allowedRoles={["STUDENT_EDITOR", "ALUMNI", "ADMIN"]} />}>
             <Route path="/events/create" element={<CreateEvent />} />
             <Route path="/events/edit/:id" element={<CreateEvent />} /> {/* Reuse CreateEvent for editing */}
           </Route>
 
-          <Route path="/jobs" element={<JobsList />} />
           <Route element={<RoleRoute allowedRoles={["ALUMNI", "ADMIN"]} />}>
             <Route path="/jobs/create" element={<CreateJob />} />
             <Route path="/jobs/edit/:id" element={<CreateJob />} /> {/* Reuse CreateJob for editing */}
