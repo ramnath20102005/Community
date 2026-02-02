@@ -8,20 +8,22 @@ const ErrorMessage = ({ message, onClose, type = "error" }) => {
     };
 
     return (
-        <div className={`message ${typeClasses[type]}`} role="alert">
-            <div className="message-content">
-                <span className="message-icon">
-                    {type === "error" && "❌"}
-                    {type === "warning" && "⚠️"}
-                    {type === "info" && "ℹ️"}
-                </span>
-                <span className="message-text">{message}</span>
+        <div className="message-container">
+            <div className={`message ${typeClasses[type]}`} role="alert">
+                <div className="message-content">
+                    <span className="message-icon">
+                        {type === "error" && "✕"}
+                        {type === "warning" && "!"}
+                        {type === "info" && "i"}
+                    </span>
+                    <span className="message-text">{message}</span>
+                </div>
+                {onClose && (
+                    <button onClick={onClose} className="message-close" aria-label="Close">
+                        ✕
+                    </button>
+                )}
             </div>
-            {onClose && (
-                <button onClick={onClose} className="message-close" aria-label="Close">
-                    ✕
-                </button>
-            )}
         </div>
     );
 };

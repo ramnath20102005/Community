@@ -1,0 +1,123 @@
+/**
+ * PRESTIGE DESIGN SYSTEM - MESSAGE & NOTIFICATION STYLES
+ * High-end editorial aesthetic for success and error states
+ */
+
+.message-container {
+    margin-bottom: var(--space-md);
+    animation: messageSlideIn 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.message {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid transparent;
+}
+
+.message::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.05;
+    z-index: 0;
+}
+
+.message-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 1;
+}
+
+.message-icon {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-text {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    line-height: 1.4;
+}
+
+.message-close {
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    opacity: 0.5;
+    transition: var(--transition-base);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 20px;
+}
+
+.message-close:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.1);
+    transform: rotate(90deg);
+}
+
+/* --- Type Specifics --- */
+
+/* Success - Rich Emerald/Gold Tone */
+.message-success {
+    background: #f6ffed;
+    border-left-color: #52c41a;
+    color: #237804;
+}
+.message-success::before { background-color: #52c41a; }
+
+/* Error - Sophisticated Crimson */
+.message-error {
+    background: #fff2f0;
+    border-left-color: #ff4d4f;
+    color: #a8071a;
+}
+.message-error::before { background-color: #ff4d4f; }
+
+/* Warning - Warm Ochre */
+.message-warning {
+    background: #fffbe6;
+    border-left-color: #faad14;
+    color: #874d00;
+}
+.message-warning::before { background-color: #faad14; }
+
+/* Info - Deep Azure */
+.message-info {
+    background: #e6f7ff;
+    border-left-color: #1890ff;
+    color: #003a8c;
+}
+.message-info::before { background-color: #1890ff; }

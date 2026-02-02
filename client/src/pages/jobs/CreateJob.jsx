@@ -102,7 +102,7 @@ const CreateJob = () => {
             <div className="content-width">
                 {loading && <div style={{ textAlign: 'center', padding: '40px' }}><Loader /></div>}
                 <div className="card-editorial" style={{ opacity: loading ? 0.5 : 1 }}>
-                    {success && <SuccessMessage message={`Job opportunity ${isEditMode ? 'updated' : 'posted'} successfully! 🚀`} />}
+                    {success && <SuccessMessage message={`Job opportunity ${isEditMode ? 'updated' : 'posted'} successfully! 🚀`} onClose={() => setSuccess(false)} />}
                     {error && <ErrorMessage message={error} onClose={() => setError("")} />}
 
                     <form onSubmit={handleSubmit(onSubmit)} className="login-form">

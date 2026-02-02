@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: 6
+        minlength: 8
     },
     role: {
         type: String,
@@ -62,7 +62,7 @@ const userSchema = new mongoose.Schema({
         default: ""
     },
     profileImage: {
-        type: String,
+        type: String, // Stores profile photo as Base64 string
         default: ""
     },
     createdAt: {

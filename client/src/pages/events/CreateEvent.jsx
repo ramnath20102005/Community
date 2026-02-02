@@ -5,6 +5,7 @@ import { useForm } from "../../hooks/useForm";
 import { useSocket } from "../../hooks/useSocket";
 import { EVENT_CREATED } from "../../utils/socketEvents";
 import { validators, composeValidators } from "../../utils/validators";
+import { fileToBase64, filesToBase64 } from "../../utils/fileToBase64";
 import postService from "../../services/post.service";
 import Card from "../../components/Card";
 import ErrorMessage from "../../components/ErrorMessage";
@@ -96,15 +97,27 @@ const CreateEvent = () => {
         try {
             setUploading(true);
             setError("");
-            const response = await postService.uploadMultipleFiles(files);
+            
+            // Convert files to Base64 locally instead of uploading to server
+            const base64Files = await filesToBase64(files);
 
             if (type === 'image') {
-                setUploadedImages(prev => [...prev, ...response.files]);
+                const newImages = base64Files.map((base64, index) => ({
+                    url: base64,
+                    name: files[index].name
+                }));
+                setUploadedImages(prev => [...prev, ...newImages]);
             } else {
-                setUploadedDocs(prev => [...prev, ...response.files]);
+                const newDocs = base64Files.map((base64, index) => ({
+                    url: base64,
+                    originalName: files[index].name,
+                    mimetype: files[index].type
+                }));
+                setUploadedDocs(prev => [...prev, ...newDocs]);
             }
         } catch (err) {
-            setError("Failed to upload files. Please ensure the server is running.");
+            setError("Failed to convert files to Base64.");
+            console.error(err);
         } finally {
             setUploading(false);
         }
@@ -127,8 +140,8 @@ const CreateEvent = () => {
                 const file = item.getAsFile();
                 try {
                     setUploading(true);
-                    const response = await postService.uploadFile(file);
-                    setUploadedImages(prev => [...prev, response]);
+                    const base64 = await fileToBase64(file);
+                    setUploadedImages(prev => [...prev, { url: base64, name: "pasted-image.png" }]);
                 } catch (err) {
                     setError("Failed to process pasted image.");
                 } finally {
@@ -143,6 +156,20 @@ const CreateEvent = () => {
         e.preventDefault();
         const isValid = validate();
         if (isValid) {
+            // Validate External Links
+            for (const link of externalLinks) {
+                if (link.url.trim()) {
+                    const label = link.label.toLowerCase();
+                    if (label.includes("linkedin") && validators.linkedIn(link.url)) {
+                        setError(`Invalid LinkedIn URL in resources.`);
+                        return;
+                    }
+                    if (label.includes("leetcode") && validators.leetCode(link.url)) {
+                        setError(`Invalid LeetCode URL in resources.`);
+                        return;
+                    }
+                }
+            }
             setIsPreview(true);
         } else {
             const errorCount = Object.keys(errors).length;
@@ -264,7 +291,7 @@ const CreateEvent = () => {
             </div>
 
             {error && <ErrorMessage message={error} onClose={() => setError("")} />}
-            {success && <SuccessMessage message={success} />}
+            {success && <SuccessMessage message={success} onClose={() => setSuccess("")} />}
 
             {loading && !isPreview && <div style={{ textAlign: 'center', padding: '100px' }}><Loader /></div>}
 

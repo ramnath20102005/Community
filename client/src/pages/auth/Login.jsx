@@ -4,6 +4,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useForm } from "../../hooks/useForm";
 import { validators } from "../../utils/validators";
 import authService from "../../services/auth.service";
+import SuccessMessage from "../../components/SuccessMessage";
 import ErrorMessage from "../../components/ErrorMessage";
 import Loader from "../../components/Loader";
 import '../page_css/Login.css';
@@ -15,6 +16,7 @@ const Login = () => {
     const navigate = useNavigate();
     const { login } = useAuth();
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
 
     const validationRules = {
         email: (value) => {
@@ -23,7 +25,7 @@ const Login = () => {
             if (!value.endsWith("@kongu.edu")) return "Please use your @kongu.edu email";
             return "";
         },
-        password: validators.password,
+        password: (value) => !value ? "Password is required" : "",
     };
 
     const { values, errors, handleChange, handleBlur, handleSubmit, isSubmitting } =
@@ -37,8 +39,11 @@ const Login = () => {
             const response = await authService.login(formValues.email, formValues.password);
 
             if (response && response.token) {
-                login(response.user, response.token);
-                navigate("/general");
+                setSuccess("AUTHENTICATION SUCCESSFUL");
+                setTimeout(() => {
+                    login(response.user, response.token);
+                    navigate("/general");
+                }, 1000);
             }
         } catch (err) {
             console.error("Login attempt failed:", err);
@@ -55,6 +60,7 @@ const Login = () => {
                 </header>
 
                 {error && <ErrorMessage message={error} onClose={() => setError("")} />}
+                {success && <SuccessMessage message={success} />}
 
                 <form onSubmit={handleSubmit(onSubmit)} className="login-form">
                     <div className="login-form-group">

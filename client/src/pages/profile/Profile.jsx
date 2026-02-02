@@ -4,6 +4,8 @@ import userService from "../../services/user.service";
 import Loader from "../../components/Loader";
 import SuccessMessage from "../../components/SuccessMessage";
 import ErrorMessage from "../../components/ErrorMessage";
+import { fileToBase64 } from "../../utils/fileToBase64";
+import { validators } from "../../utils/validators";
 import '../page_css/Dashboard.css';
 
 /**
@@ -35,6 +37,16 @@ const Profile = () => {
         setError("");
         setSuccess("");
 
+        // Validation
+        if (form.linkedIn) {
+            const linkedInError = validators.linkedIn(form.linkedIn);
+            if (linkedInError) {
+                setError(linkedInError);
+                setLoading(false);
+                return;
+            }
+        }
+
         try {
             const response = await userService.updateProfile(form);
             setSuccess("Profile updated successfully! 🌿");
@@ -59,7 +71,7 @@ const Profile = () => {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 600px) 1fr', gap: '48px', alignItems: 'start' }}>
                 <div className="card-editorial shadow-magazine">
-                    {success && <SuccessMessage message={success} />}
+                    {success && <SuccessMessage message={success} onClose={() => setSuccess("")} />}
                     {error && <ErrorMessage message={error} onClose={() => setError("")} />}
 
                     <form onSubmit={handleSubmit} className="login-form">
@@ -122,14 +134,25 @@ const Profile = () => {
                         </div>
 
                         <div className="login-form-group">
-                            <label>Profile Image URL</label>
+                            <label>Profile Image</label>
                             <input
-                                type="text"
-                                name="profileImage"
-                                value={form.profileImage}
-                                onChange={handleChange}
-                                placeholder="Link to your professional photo"
+                                type="file"
+                                accept="image/*"
+                                onChange={async (e) => {
+                                    const file = e.target.files[0];
+                                    if (file) {
+                                        try {
+                                            const base64 = await fileToBase64(file);
+                                            setForm({ ...form, profileImage: base64 });
+                                        } catch (err) {
+                                            setError("Failed to process image.");
+                                        }
+                                    }
+                                }}
                             />
+                            <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '5px' }}>
+                                Selected image will be stored directly in your profile.
+                            </p>
                         </div>
 
                         <div className="divider-short" style={{ margin: '20px 0' }}></div>

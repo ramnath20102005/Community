@@ -9,16 +9,18 @@ const SuccessMessage = ({ message, onClose, autoClose = true, duration = 3000 })
     }
 
     return (
-        <div className="message message-success" role="alert">
-            <div className="message-content">
-                <span className="message-icon">✅</span>
-                <span className="message-text">{message}</span>
+        <div className="message-container">
+            <div className="message message-success" role="alert">
+                <div className="message-content">
+                    <span className="message-icon">✓</span>
+                    <span className="message-text">{message}</span>
+                </div>
+                {onClose && (
+                    <button onClick={onClose} className="message-close" aria-label="Close">
+                        ✕
+                    </button>
+                )}
             </div>
-            {onClose && (
-                <button onClick={onClose} className="message-close" aria-label="Close">
-                    ✕
-                </button>
-            )}
         </div>
     );
 };

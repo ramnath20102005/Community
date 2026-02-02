@@ -23,22 +23,52 @@ export const validators = {
         if (!value.endsWith("@kongu.edu")) {
             return "Registration is exclusive to @kongu.edu email addresses";
         }
-        // Further pattern check (optional but recommended based on previous logs)
+        
         const pattern = /\.(\d{2})([a-z]{3})@kongu\.edu$/i;
-        if (!pattern.test(value)) {
+        const match = value.match(pattern);
+        
+        if (!match) {
             return "Format: name.yearDept@kongu.edu (e.g., student.23cse@kongu.edu)";
         }
+
+        const yearDigits = parseInt(match[1], 10);
+        const currentYear = new Date().getFullYear();
+        const currentYearDigits = currentYear % 100;
+
+        // Restriction: year between 01 (2001) and current year
+        if (yearDigits < 1 || yearDigits > currentYearDigits) {
+            return `Year must be between 01 and ${currentYearDigits.toString().padStart(2, '0')}`;
+        }
+        
         return "";
     },
 
     /**
-     * Validate password strength
+     * Validate password strength (Min 8 chars, 1 Cap, 1 Small, 1 Num, 1 Special)
      */
     password: (value) => {
         if (!value) return "Password is required";
-        if (value.length < 6) {
-            return "Password must be at least 6 characters long";
+        
+        if (value.length < 8) {
+            return "Password must be at least 8 characters long";
         }
+        
+        if (!/[A-Z]/.test(value)) {
+            return "Add at least 1 capital letter";
+        }
+        
+        if (!/[a-z]/.test(value)) {
+            return "Add at least 1 small letter";
+        }
+        
+        if (!/[0-9]/.test(value)) {
+            return "Add at least 1 numeric character";
+        }
+        
+        if (!/[^A-Za-z0-9]/.test(value)) {
+            return "Add at least 1 special character";
+        }
+        
         return "";
     },
 
@@ -137,8 +167,34 @@ export const validators = {
             new URL(value);
             return "";
         } catch {
-            return "Please enter a valid URL";
+            return "Please enter a valid URL (include http:// or https://)";
         }
+    },
+
+    /**
+     * Validate LinkedIn URL
+     */
+    linkedIn: (value) => {
+        if (!value) return "";
+        const error = validators.url(value);
+        if (error) return error;
+        if (!value.toLowerCase().includes("linkedin.com/")) {
+            return "Please enter a valid LinkedIn profile URL";
+        }
+        return "";
+    },
+
+    /**
+     * Validate LeetCode URL
+     */
+    leetCode: (value) => {
+        if (!value) return "";
+        const error = validators.url(value);
+        if (error) return error;
+        if (!value.toLowerCase().includes("leetcode.com/")) {
+            return "Please enter a valid LeetCode profile URL";
+        }
+        return "";
     },
 
     /**

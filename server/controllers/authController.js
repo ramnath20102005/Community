@@ -33,11 +33,47 @@ exports.register = async (req, res) => {
         const { name, email, password } = req.body;
         console.log("Processing register for:", { name, email });
 
+        // 1. Password Complexity Validation
+        if (!password || password.length < 8) {
+            return res.status(400).json({ message: "Password must be at least 8 characters long" });
+        }
+        if (!/[A-Z]/.test(password)) {
+            return res.status(400).json({ message: "Add at least 1 capital letter" });
+        }
+        if (!/[a-z]/.test(password)) {
+            return res.status(400).json({ message: "Add at least 1 small letter" });
+        }
+        if (!/[0-9]/.test(password)) {
+            return res.status(400).json({ message: "Add at least 1 numeric character" });
+        }
+        if (!/[^A-Za-z0-9]/.test(password)) {
+            return res.status(400).json({ message: "Add at least 1 special character" });
+        }
+
+        // 2. Email Basic Checks
+        if (!email.endsWith("@kongu.edu")) {
+            return res.status(400).json({ message: "Registration is exclusive to @kongu.edu" });
+        }
+
         let user = await User.findOne({ email });
         if (user) return res.status(400).json({ message: "User already exists" });
 
         const info = detectRoleAndDept(email);
 
+        // 3. Email Year Validation (01 to Current)
+        if (email.toLowerCase() !== 'admin@kongu.edu') {
+            const username = email.split("@")[0];
+            const match = username.match(/\.(\d{2})[a-z]{3}$/i);
+            if (!match) {
+                return res.status(400).json({ message: "Invalid Kongu email format (name.yearDept@kongu.edu)" });
+            }
+            const yearDigits = parseInt(match[1], 10);
+            const currentYearDigits = new Date().getFullYear() % 100;
+            if (yearDigits < 1 || yearDigits > currentYearDigits) {
+                return res.status(400).json({ message: `Year must be between 01 and ${currentYearDigits.toString().padStart(2, '0')}` });
+            }
+        }
+        
         // Special case for Admin registration
         let role = info.role;
         if (email.toLowerCase() === 'admin@kongu.edu') {

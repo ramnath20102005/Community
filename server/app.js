@@ -9,7 +9,8 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(morgan("dev"));
 
 // Serve static files
@@ -18,8 +19,13 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Database Connection
 const MONGO_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/kongu_community";
 
+const { initBackupScheduler } = require('./utils/backup');
+
 mongoose.connect(MONGO_URI)
-  .then(() => console.log("Connected to MongoDB 🍃"))
+  .then(() => {
+    console.log("Connected to MongoDB 🍃");
+    initBackupScheduler(); // Start Automatic Backups
+  })
   .catch(err => {
     console.error("CRITICAL: MongoDB connection error:", err.message);
     console.log("Using Mock Database Logic... (Internal Server Error will occur on DB writes)");

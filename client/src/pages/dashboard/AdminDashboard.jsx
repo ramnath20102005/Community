@@ -88,6 +88,18 @@ const AdminDashboard = () => {
         return matchesSearch && matchesRole;
     });
 
+    const handleBackup = async () => {
+        try {
+            setLoading(true);
+            const res = await userService.triggerBackup();
+            setSuccess(res.message);
+        } catch (err) {
+            setError(err.response?.data?.message || "Backup failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (loading && users.length === 0) return <Loader />;
 
     return (
@@ -99,6 +111,9 @@ const AdminDashboard = () => {
                     <p>Manage users, analytics, and permissions.</p>
                 </div>
                 <div className="admin-actions">
+                    <button className="btn btn-primary" onClick={handleBackup} style={{ marginRight: '10px' }}>
+                         💾 Backup Data
+                    </button>
                     <button className="btn btn-outline" onClick={fetchUsers}>Refresh Data</button>
                 </div>
             </div>

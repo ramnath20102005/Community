@@ -109,7 +109,7 @@ const AlumniDirectory = () => {
                 </div>
             )}
 
-            {!loading && filteredAlumni.length === 0 && (person === null) && (
+            {!loading && filteredAlumni.length === 0 && (
                 <div style={{ textAlign: 'center', padding: '100px 0' }}>
                     <p style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>No alumni found matching your search.</p>
                 </div>

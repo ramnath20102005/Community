@@ -24,6 +24,11 @@ const userService = {
     updateProfile: async (profileData) => {
         const response = await api.put('/users/profile', profileData);
         return response.data;
+    },
+
+    triggerBackup: async () => {
+        const response = await api.post('/users/backup');
+        return response.data;
     }
 };
 

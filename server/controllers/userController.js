@@ -77,6 +77,8 @@ exports.getAlumni = async (req, res) => {
     }
 };
 
+const { performBackup } = require('../utils/backup');
+
 // Demote from Club Member (Admin only)
 exports.demoteUser = async (req, res) => {
     try {
@@ -92,5 +94,15 @@ exports.demoteUser = async (req, res) => {
         res.json({ message: "User demoted to regular student", user });
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+};
+
+// Trigger Manual Backup (Admin only)
+exports.triggerBackup = async (req, res) => {
+    try {
+        await performBackup();
+        res.json({ message: "Database backup initiated successfully. Check server/backups/ directory." });
+    } catch (err) {
+        res.status(500).json({ message: "Backup failed: " + err.message });
     }
 };
