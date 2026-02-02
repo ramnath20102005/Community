@@ -60,7 +60,7 @@ export const detectUserRole = (user) => {
 
     // 2. STUDENT_EDITOR (Approved Club Member)
     // If user is a student AND is an approved club member, they are an Editor in the UI
-    if (user.isClubMember && user.clubStatus === "APPROVED") {
+    if (user.isClubMember) {
         return "STUDENT_EDITOR";
     }
 

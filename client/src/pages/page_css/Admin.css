@@ -1,0 +1,185 @@
+/**
+ * ADMIN MODULE STYLES
+ * Editorial management aesthetic
+ */
+
+.admin-dashboard {
+    max-width: 1200px;
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--accent-line);
+}
+
+.admin-tab {
+    padding: 12px 0;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: var(--transition-base);
+}
+
+.admin-tab.active {
+    color: var(--text-charcoal);
+}
+
+.admin-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--text-charcoal);
+}
+
+/* User Management Table */
+.user-table-container {
+    overflow-x: auto;
+    background: var(--bg-white);
+    border: 1px solid var(--accent-line);
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.user-table th {
+    padding: 20px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--accent-line);
+    background: var(--bg-warm);
+}
+
+.user-table td {
+    padding: 20px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--bg-warm);
+    vertical-align: middle;
+}
+
+.user-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--text-charcoal);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.role-badge {
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.role-badge.STUDENT {
+    background: #e6f7ff;
+    color: #1890ff;
+}
+
+.role-badge.ALUMNI {
+    background: #f6ffed;
+    color: #52c41a;
+}
+
+.role-badge.ADMIN {
+    background: #fff7e6;
+    color: #fa8c16;
+}
+
+.club-member-badge {
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 4px;
+    background: var(--accent-olive);
+    color: white;
+    margin-left: 8px;
+}
+
+.action-btns {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 10px;
+}
+
+/* Modal Overlay for Promotion */
+.promotion-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.promotion-modal {
+    background: var(--bg-ivory);
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid var(--text-charcoal);
+}
+
+/* Analytics Cards */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.analytics-card {
+    padding: 40px;
+    background: var(--bg-white);
+    border: 1px solid var(--accent-line);
+    text-align: center;
+}
+
+.analytics-value {
+    font-size: 48px;
+    font-family: var(--font-heading);
+    margin: 15px 0;
+}
+
+.analytics-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+}

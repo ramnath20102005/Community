@@ -16,11 +16,13 @@ app.use(morgan("dev"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Database Connection
-mongoose.connect(process.env.MONGODB_URI)
+const MONGO_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/kongu_community";
+
+mongoose.connect(MONGO_URI)
   .then(() => console.log("Connected to MongoDB 🍃"))
   .catch(err => {
-    console.error("MongoDB connection error:", err.message);
-    console.log("Proceeding with mock DB logic for demo safety...");
+    console.error("CRITICAL: MongoDB connection error:", err.message);
+    console.log("Using Mock Database Logic... (Internal Server Error will occur on DB writes)");
   });
 
 // Routes

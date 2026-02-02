@@ -38,18 +38,24 @@ exports.register = async (req, res) => {
 
         const info = detectRoleAndDept(email);
 
+        // Special case for Admin registration
+        let role = info.role;
+        if (email.toLowerCase() === 'admin@kongu.edu') {
+            role = 'ADMIN';
+        }
+
         user = new User({
             name,
             email,
             password,
-            role: info.role,
+            role,
             department: info.dept,
             batchYear: info.year
         });
 
         await user.save();
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '10s' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
 
         res.status(201).json({
             token,
@@ -77,7 +83,7 @@ exports.login = async (req, res) => {
         const isMatch = await user.comparePassword(password);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '10s' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
 
         res.json({
             token,

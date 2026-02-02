@@ -1,9 +1,9 @@
 /**
- * Login CSS - Premium Editorial Academic Design
- * Inspired by the provided fashion portal aesthetic
+ * Register CSS - Premium Editorial Academic Design
+ * Mirrored from Login aesthetic for consistency
  */
 
-.login-page {
+.register-page {
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -15,8 +15,8 @@
 }
 
 /* Watermark Background */
-.login-page::before {
-    content: 'COMMUNITY';
+.register-page::before {
+    content: 'GATEWAY';
     position: absolute;
     top: 50%;
     left: 50%;
@@ -31,10 +31,11 @@
     z-index: 1;
 }
 
-.login-card {
+.register-card {
     background-color: var(--bg-white);
     width: 100%;
-    max-width: 450px;
+    max-width: 650px;
+    /* Slightly wider for register form */
     padding: 60px 50px;
     border: 1px solid var(--text-charcoal);
     position: relative;
@@ -55,12 +56,12 @@
     }
 }
 
-.login-header {
+.register-header {
     margin-bottom: 48px;
     text-align: center;
 }
 
-.login-header h1 {
+.register-header h1 {
     font-family: 'Playfair Display', serif;
     font-size: 2.8rem;
     letter-spacing: -1px;
@@ -69,7 +70,7 @@
     color: var(--text-charcoal);
 }
 
-.login-header p {
+.register-header p {
     font-family: 'Inter', sans-serif;
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -78,58 +79,96 @@
 }
 
 /* Form Styling */
-.login-form .login-form-group {
-    margin-bottom: 32px;
+.register-form .register-form-group {
+    margin-bottom: 24px;
 }
 
-.login-form label {
+.register-form label {
     display: block;
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     color: var(--text-grey);
     font-weight: 600;
 }
 
-.login-form input {
+.register-form input {
     width: 100%;
-    padding: 16px 0;
+    padding: 12px 0;
     background: transparent;
     border: none;
     border-bottom: 1px solid var(--accent-line);
     font-family: 'Inter', sans-serif;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--text-charcoal);
     transition: all 0.3s ease;
 }
 
-.login-form input:focus {
+.register-form input:focus {
     outline: none;
     border-bottom-color: var(--text-charcoal);
 }
 
-.login-form input::placeholder {
+.register-form input::placeholder {
     color: var(--text-muted);
     font-style: italic;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+}
+
+/* Info Box for Detected Stats */
+.email-info-box {
+    margin-top: 12px;
+    background: var(--bg-ivory);
+    padding: 14px;
+    border: 1px dashed var(--accent-line);
+    font-size: 13px;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Strength Meter */
+.strength-container {
+    margin-top: 8px;
+}
+
+.strength-bar-bg {
+    height: 3px;
+    background: #eee;
+    margin-bottom: 6px;
+}
+
+.strength-bar-fill {
+    height: 100%;
+    transition: all 0.4s ease;
 }
 
 /* Validation Styling */
-.login-form input.error {
+.register-form input.error {
     border-bottom-color: #e03131;
 }
 
-.login-error-text {
+.register-error-text {
     display: block;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: #e03131;
-    margin-top: 8px;
+    margin-top: 6px;
     letter-spacing: 0.5px;
 }
 
 /* Submit Button */
-.login-submit-btn {
+.register-submit-btn {
     width: 100%;
     padding: 18px;
     background-color: var(--text-charcoal);
@@ -141,34 +180,34 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    margin-top: 16px;
+    margin-top: 24px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.login-submit-btn:hover:not(:disabled) {
+.register-submit-btn:hover:not(:disabled) {
     background-color: transparent;
     color: var(--text-charcoal);
 }
 
-.login-submit-btn:disabled {
+.register-submit-btn:disabled {
     opacity: 0.7;
     cursor: not-allowed;
 }
 
 /* Footer Links */
-.login-footer {
+.register-footer {
     margin-top: 32px;
     text-align: center;
 }
 
-.login-footer p {
+.register-footer p {
     font-size: 0.8rem;
     color: var(--text-grey);
 }
 
-.login-footer a {
+.register-footer a {
     color: var(--text-charcoal);
     font-weight: 600;
     text-decoration: underline;
@@ -177,16 +216,16 @@
 
 /* Responsiveness */
 @media (max-width: 767px) {
-    .login-page {
+    .register-page {
         padding: 20px 16px;
     }
 
-    .login-card {
+    .register-card {
         padding: 40px 24px;
         box-shadow: 12px 12px 0 var(--text-charcoal);
     }
 
-    .login-header h1 {
+    .register-header h1 {
         font-size: 2rem;
     }
 }

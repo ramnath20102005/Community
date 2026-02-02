@@ -1,121 +1,142 @@
 /**
- * NAVBAR - Editorial Style
- * Minimal, thin, magazine masthead inspired
+ * NAVBAR - Editorial & Premium Design
  */
 
 .navbar {
-    background: var(--bg-white);
-    border-bottom: var(--border-thin);
     position: sticky;
     top: 0;
-    z-index: 100;
-    padding: var(--space-sm) 0;
-    transition: var(--transition-base);
+    left: 0;
+    right: 0;
+    background: var(--bg-white);
+    border-bottom: 1px solid var(--accent-line);
+    z-index: 1000;
+    height: var(--navbar-height, 70px);
+    display: flex;
+    align-items: center;
 }
 
 .navbar-container {
+    width: 100%;
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 0 var(--space-md);
+    padding: 0 2rem;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    height: 64px;
+    align-items: center;
 }
 
 .navbar-left {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
+    gap: 1.5rem;
 }
 
+/* Hamburger Menu Toggle */
 .menu-toggle {
-    background: transparent;
+    display: none;
+    /* Desktop hidden */
+    background: var(--bg-warm);
     border: none;
-    font-size: var(--text-xl);
-    color: var(--text-charcoal);
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
     cursor: pointer;
-    padding: 0;
-    transition: var(--transition-fast);
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
 }
 
 .menu-toggle:hover {
-    color: var(--accent-olive);
+    background: var(--text-charcoal);
+    color: white;
 }
 
 .navbar-brand {
     display: flex;
     align-items: center;
-    gap: 12px;
-    text-decoration: none;
-}
-
-.navbar-brand h3 {
-    font-family: var(--font-heading);
-    font-size: var(--text-lg);
-    font-weight: var(--weight-medium);
-    letter-spacing: var(--tracking-wider);
-    margin: 0;
-    color: var(--text-charcoal);
+    gap: 0.75rem;
 }
 
 .navbar-logo {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     background: var(--text-charcoal);
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--bg-ivory);
-    font-weight: var(--weight-bold);
-    font-size: var(--text-sm);
+    font-weight: 700;
+    border-radius: 0;
+    /* Keep it sharp */
+}
+
+.navbar-brand h3 {
+    margin: 0;
+    font-family: var(--font-heading);
+    letter-spacing: -0.02rem;
+    font-size: 1.1rem;
 }
 
 .navbar-right {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
+    gap: 2rem;
 }
 
 .navbar-user {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    text-align: right;
 }
 
 .navbar-user-name {
-    font-size: var(--text-sm);
-    font-weight: var(--weight-medium);
-    color: var(--text-charcoal);
-    letter-spacing: var(--tracking-wide);
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
 }
 
 .navbar-user-role {
-    font-size: var(--text-xs);
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
     color: var(--accent-olive);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wider);
-    font-weight: var(--weight-medium);
 }
 
-.logout-btn {
-    font-size: var(--text-xs);
-    padding: 8px 20px;
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wide);
-}
+/* --- TIERS --- */
 
-/* Responsive */
-@media (max-width: 768px) {
+/* TABLET (768px–1023px) */
+@media (max-width: 1023px) {
+    .menu-toggle {
+        display: flex;
+    }
+
     .navbar-container {
-        padding: 0 var(--space-sm);
+        padding: 0 1.5rem;
+    }
+
+    .navbar-user {
+        display: none;
+        /* Hide detailed user info on tablet to save space */
+    }
+}
+
+/* MOBILE (≤767px) */
+@media (max-width: 767px) {
+    .navbar-container {
+        padding: 0 1rem;
     }
 
     .navbar-brand h3 {
-        font-size: var(--text-base);
+        display: none;
+        /* Logo only for space */
     }
 
-    .navbar-user-name {
-        display: none;
+    .btn-outline {
+        padding: 6px 16px !important;
+        font-size: 0.65rem;
+    }
+
+    .navbar-right {
+        gap: 1rem;
     }
 }

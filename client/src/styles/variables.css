@@ -99,6 +99,8 @@
     /* --- Shadows (Minimal) --- */
     --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.04);
     --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.06);
+
+    --navbar-height: 70px;
 }
 
 /* --- Dark Mode (Optional) --- */

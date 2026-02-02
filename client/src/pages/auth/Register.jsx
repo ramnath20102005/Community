@@ -3,14 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useForm } from "../../hooks/useForm";
 import { validators, composeValidators } from "../../utils/validators";
-import { isValidKonguEmail, detectRoleFromEmail, parseKonguEmail } from "../../utils/roleDetector";
+import { detectRoleFromEmail, parseKonguEmail } from "../../utils/roleDetector";
 import authService from "../../services/auth.service";
 import ErrorMessage from "../../components/ErrorMessage";
 import SuccessMessage from "../../components/SuccessMessage";
 import Loader from "../../components/Loader";
+import "../page_css/Register.css";
 
 /**
- * Register Page - Full-Stack Implementation
+ * Register Page - Premium Editorial Design
  * Only accepts @kongu.edu emails
  */
 const Register = () => {
@@ -21,7 +22,7 @@ const Register = () => {
     const [emailInfo, setEmailInfo] = useState(null);
 
     const validationRules = {
-        name: validators.required("Name"),
+        name: validators.required("Full Name"),
         email: validators.konguEmail,
         password: composeValidators(validators.password, validators.minLength(6, "Password")),
         confirmPassword: validators.confirmPassword,
@@ -56,12 +57,12 @@ const Register = () => {
                 password: formValues.password
             });
 
-            setSuccess("Welcome to the Community!");
+            setSuccess("WELCOME TO THE COMMUNITY");
 
             setTimeout(() => {
                 register(response.user, response.token);
                 navigate("/dashboard");
-            }, 1000);
+            }, 1200);
         } catch (err) {
             console.error("Registration failed:", err);
             setError(err.response?.data?.message || "Registration failed. Server error.");
@@ -69,19 +70,19 @@ const Register = () => {
     };
 
     return (
-        <div className="container" style={{ maxWidth: '600px' }}>
-            <div className="card-editorial fade-in" style={{ padding: '48px' }}>
-                <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                    <h2 style={{ marginBottom: '8px' }}>Create Account</h2>
-                    <p>Join the Kongu Community Gateway</p>
-                </div>
+        <div className="register-page">
+            <div className="register-card">
+                <header className="register-header">
+                    <h1>CREATE ACCOUNT</h1>
+                    <p>JOIN THE KONGU COMMUNITY GATEWAY</p>
+                </header>
 
                 {error && <ErrorMessage message={error} onClose={() => setError("")} />}
                 {success && <SuccessMessage message={success} />}
 
-                <form onSubmit={handleSubmit(onSubmit)} className="login-form">
-                    <div className="login-form-group">
-                        <label>Full Name *</label>
+                <form onSubmit={handleSubmit(onSubmit)} className="register-form">
+                    <div className="register-form-group">
+                        <label>FULL NAME *</label>
                         <input
                             type="text"
                             name="name"
@@ -89,13 +90,15 @@ const Register = () => {
                             onChange={handleChange}
                             onBlur={handleBlur}
                             className={errors.name ? "error" : ""}
-                            placeholder="Student Name"
+                            placeholder="e.g. Rahul Sharma"
+                            autoComplete="off"
+                            required
                         />
-                        {errors.name && <span className="login-error-text">{errors.name}</span>}
+                        {errors.name && <span className="register-error-text">{errors.name}</span>}
                     </div>
 
-                    <div className="login-form-group">
-                        <label>College Email *</label>
+                    <div className="register-form-group">
+                        <label>COLLEGE EMAIL *</label>
                         <input
                             type="email"
                             name="email"
@@ -103,20 +106,22 @@ const Register = () => {
                             onChange={handleEmailChange}
                             onBlur={handleBlur}
                             className={errors.email ? "error" : ""}
-                            placeholder="abc.23cse@kongu.edu"
+                            placeholder="your.id@kongu.edu"
+                            autoComplete="off"
+                            required
                         />
-                        {errors.email && <span className="login-error-text">{errors.email}</span>}
+                        {errors.email && <span className="register-error-text">{errors.email}</span>}
 
                         {emailInfo && !errors.email && (
-                            <div style={{ marginTop: '12px', background: 'var(--bg-warm)', padding: '12px', border: 'var(--border-thin)', fontSize: '13px' }}>
-                                <span>🎉 Auto-detected: <strong>{emailInfo.role}</strong> of {emailInfo.department} ({emailInfo.joiningYear})</span>
+                            <div className="email-info-box">
+                                <span>✨ IDENTITY DETECTED: <strong>{emailInfo.role}</strong> / {emailInfo.department} (Class of {emailInfo.joiningYear + 4})</span>
                             </div>
                         )}
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                        <div className="login-form-group">
-                            <label>Password *</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '24px' }}>
+                        <div className="register-form-group">
+                            <label>SECURE KEY *</label>
                             <input
                                 type="password"
                                 name="password"
@@ -125,26 +130,25 @@ const Register = () => {
                                 onBlur={handleBlur}
                                 className={errors.password ? "error" : ""}
                                 placeholder="••••••••"
+                                required
                             />
                             {values.password && (
-                                <div style={{ marginTop: '8px' }}>
-                                    <div style={{ height: '4px', background: '#eee', borderRadius: '2px', overflow: 'hidden' }}>
-                                        <div style={{
-                                            height: '100%',
+                                <div className="strength-container">
+                                    <div className="strength-bar-bg">
+                                        <div className="strength-bar-fill" style={{
                                             width: `${(strength.score + 1) * 20}%`,
-                                            background: strength.color,
-                                            transition: 'width 0.3s ease'
+                                            background: strength.color
                                         }} />
                                     </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', fontSize: '11px' }}>
-                                        <span style={{ color: strength.color, fontWeight: 'bold' }}>{strength.label}</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px' }}>
+                                        <span style={{ color: strength.color, fontWeight: '700' }}>{strength.label.toUpperCase()}</span>
                                         <span style={{ color: 'var(--text-grey)' }}>{strength.advice}</span>
                                     </div>
                                 </div>
                             )}
                         </div>
-                        <div className="login-form-group">
-                            <label>Confirm *</label>
+                        <div className="register-form-group">
+                            <label>CONFIRM KEY *</label>
                             <input
                                 type="password"
                                 name="confirmPassword"
@@ -153,25 +157,25 @@ const Register = () => {
                                 onBlur={handleBlur}
                                 className={errors.confirmPassword ? "error" : ""}
                                 placeholder="••••••••"
+                                required
                             />
-                            {errors.confirmPassword && <span className="login-error-text" style={{ position: 'absolute' }}>{errors.confirmPassword}</span>}
+                            {errors.confirmPassword && <span className="register-error-text">{errors.confirmPassword}</span>}
                         </div>
                     </div>
 
-                    <button type="submit" className="btn btn-primary login-submit" disabled={isSubmitting}>
-                        {isSubmitting ? <Loader size="small" message="" /> : "Get Started"}
+                    <button type="submit" className="register-submit-btn" disabled={isSubmitting}>
+                        {isSubmitting ? <Loader size="small" message="" /> : "VERIFY & REGISTER"}
                     </button>
                 </form>
 
-                <div className="login-footer">
-                    <p>Already member? <Link to="/login">Login instead</Link></p>
+                <div className="register-footer">
+                    <p>
+                        ALREADY A MEMBER? <Link to="/login">LOGIN INSTEAD</Link>
+                    </p>
                 </div>
             </div>
         </div>
     );
 };
-
-// Course duration for role detection
-const COURSE_DURATION = 4;
 
 export default Register;

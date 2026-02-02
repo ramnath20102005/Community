@@ -40,9 +40,17 @@ exports.createPost = async (req, res) => {
             return res.status(403).json({ message: "Only club members can post club updates" });
         }
 
-        // Logic for Job/Event Post: Ensure Alumni or Admin
-        if ((type === 'JOB_POST' || type === 'EVENT') && req.user.role === 'STUDENT' && !req.user.isAdmin) {
-            return res.status(403).json({ message: `Only alumni can post ${type.toLowerCase()}s` });
+        // Logic for Event Post: Ensure Alumni, Admin, or Club Member
+        if (type === 'EVENT') {
+            const isAuthorized = req.user.role === 'ALUMNI' || req.user.role === 'ADMIN' || req.user.isClubMember;
+            if (!isAuthorized) {
+                return res.status(403).json({ message: "Only alumni, admins, or club members can post events" });
+            }
+        }
+
+        // Logic for Job Post: Ensure Alumni or Admin
+        if (type === 'JOB_POST' && req.user.role === 'STUDENT' && req.user.role !== 'ADMIN') {
+            return res.status(403).json({ message: "Only alumni can post jobs" });
         }
 
         const post = new Post({

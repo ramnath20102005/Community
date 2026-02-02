@@ -1,3 +1,9 @@
+/**
+ * DASHBOARD LAYOUT - Clean, Non-Overlapping Architecture
+ * Desktop: Sidebar + Content side-by-side
+ * Mobile: Sidebar slides over content with backdrop
+ */
+
 .dashboard-layout {
     min-height: 100vh;
     background: var(--bg-ivory);
@@ -9,64 +15,105 @@
     display: flex;
     flex: 1;
     position: relative;
-    max-width: var(--max-width);
-    margin: 0 auto;
     width: 100%;
 }
 
+/* === SIDEBAR CONTAINER === */
 .sidebar-container {
-    width: 280px;
-    height: calc(100vh - 80px);
-    /* Height minus Navbar */
+    width: 260px;
+    flex-shrink: 0;
+    height: calc(100vh - var(--navbar-height, 70px));
     position: sticky;
-    top: 80px;
+    top: var(--navbar-height, 70px);
     background: var(--bg-white);
     border-right: 1px solid var(--accent-line);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
     overflow-y: auto;
-    z-index: 100;
 }
 
 .sidebar-container.collapsed {
     width: 0;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateX(-20px);
+    border-right: none;
+    overflow: hidden;
 }
 
+/* === MAIN CONTENT === */
 .main-content-wrapper {
     flex: 1;
     min-width: 0;
-    /* Important for flex child with overflow */
-    padding: 40px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 2.5rem;
+    background: var(--bg-ivory);
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 1024px) {
+/* === MOBILE OVERLAY === */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    top: var(--navbar-height, 70px);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 9;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* === RESPONSIVE TIERS === */
+
+/* DESKTOP (≥1024px) - Sidebar always visible, no overlay */
+@media (min-width: 1024px) {
+    .sidebar-container {
+        width: 260px;
+    }
+
+    .sidebar-container.collapsed {
+        width: 0;
+    }
+}
+
+/* TABLET & MOBILE (≤1023px) - Sidebar slides over content */
+@media (max-width: 1023px) {
     .sidebar-container {
         position: fixed;
         left: 0;
-        top: 80px;
-        height: calc(100vh - 80px);
+        top: var(--navbar-height, 70px);
+        height: calc(100vh - var(--navbar-height, 70px));
+        width: 280px;
         transform: translateX(-100%);
-        box-shadow: 20px 0 50px rgba(0, 0, 0, 0.05);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+        z-index: 100;
+        /* Above overlay on mobile */
     }
 
     .sidebar-container.open {
         transform: translateX(0);
+    }
+
+    .sidebar-container.collapsed {
+        transform: translateX(-100%);
         width: 280px;
-        opacity: 1;
-        pointer-events: all;
+        /* Maintain width for animation */
     }
 
     .main-content-wrapper {
-        padding: 24px;
+        padding: 2rem 1.5rem;
     }
 }
 
-@media (max-width: 640px) {
+/* MOBILE (≤767px) */
+@media (max-width: 767px) {
+    .sidebar-container {
+        width: 85%;
+        max-width: 300px;
+    }
+
     .main-content-wrapper {
-        padding: 20px 16px;
+        padding: 1.5rem 1rem;
     }
 }

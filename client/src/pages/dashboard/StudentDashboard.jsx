@@ -16,27 +16,37 @@ const StudentDashboard = () => {
     const { can } = useRole();
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState([
+        { label: "Community Feed", value: "0", icon: "🗞️" },
+        { label: "Club Events", value: "0", icon: "📅" },
+        { label: "Opportunities", value: "0", icon: "💼" },
+    ]);
 
     useEffect(() => {
         const fetchRecentActivity = async () => {
             try {
                 const data = await postService.getAllPosts();
-                setPosts(data.slice(0, 5)); // Only show top 5
+
+                // Calculate dynamic counts
+                const totalFeed = data.length;
+                const totalEvents = data.filter(p => p.type === 'EVENT' || p.type === 'CLUB_UPDATE').length;
+                const totalOpp = data.filter(p => p.type === 'JOB_POST' || p.type === 'RESOURCE').length;
+
+                setStats([
+                    { label: "Community Feed", value: totalFeed, icon: "🗞️" },
+                    { label: "Club Events", value: totalEvents, icon: "📅" },
+                    { label: "Opportunities", value: totalOpp, icon: "💼" },
+                ]);
+
+                setPosts(data.slice(0, 5)); // Only show top 5 in the feed
             } catch (err) {
                 console.error("Dashboard fetch failed:", err);
-                // Fallback to empty or static if needed
             } finally {
                 setLoading(false);
             }
         };
         fetchRecentActivity();
     }, []);
-
-    const stats = [
-        { label: "Community Feed", value: posts.length > 0 ? posts.length : "24", icon: "🗞️" },
-        { label: "Club Events", value: "5", icon: "📅" },
-        { label: "Opportunities", value: "12", icon: "💼" },
-    ];
 
     return (
         <div className="dashboard fade-in">

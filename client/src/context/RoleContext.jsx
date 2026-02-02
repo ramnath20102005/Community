@@ -1,9 +1,11 @@
-import { createContext, useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { detectUserRole } from "../utils/roleDetector";
 import { calculatePermissions } from "../utils/permissions";
+import { RoleContext } from "./RoleContextObject";
 
-export const RoleContext = createContext(null);
+export { RoleContext };
+
 
 /**
  * RoleProvider - Manages user permissions and sub-roles

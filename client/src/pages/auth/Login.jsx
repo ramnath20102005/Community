@@ -9,7 +9,7 @@ import Loader from "../../components/Loader";
 import '../page_css/Login.css';
 
 /**
- * Login Page - Full-Stack Implementation
+ * Login Page - Premium Editorial Design
  */
 const Login = () => {
     const navigate = useNavigate();
@@ -48,17 +48,17 @@ const Login = () => {
 
     return (
         <div className="login-page">
-            <div className="login-card fade-in">
-                <div className="login-header">
-                    <h2>Welcome Back</h2>
-                    <p>Enter your details to access the platform</p>
-                </div>
+            <div className="login-card">
+                <header className="login-header">
+                    <h1>KONGU COMMUNITY</h1>
+                    <p>UNIFIED STUDENT-ALUMNI PORTAL</p>
+                </header>
 
                 {error && <ErrorMessage message={error} onClose={() => setError("")} />}
 
                 <form onSubmit={handleSubmit(onSubmit)} className="login-form">
                     <div className="login-form-group">
-                        <label>Email</label>
+                        <label>IDENTITY / @KONGU.EDU EMAIL</label>
                         <input
                             type="email"
                             name="email"
@@ -67,12 +67,14 @@ const Login = () => {
                             onBlur={handleBlur}
                             className={errors.email ? "error" : ""}
                             placeholder="your.email@kongu.edu"
+                            autoComplete="off"
+                            required
                         />
                         {errors.email && <span className="login-error-text">{errors.email}</span>}
                     </div>
 
                     <div className="login-form-group">
-                        <label>Password</label>
+                        <label>SECURE KEY / PASSWORD</label>
                         <input
                             type="password"
                             name="password"
@@ -81,17 +83,20 @@ const Login = () => {
                             onBlur={handleBlur}
                             className={errors.password ? "error" : ""}
                             placeholder="••••••••"
+                            required
                         />
                         {errors.password && <span className="login-error-text">{errors.password}</span>}
                     </div>
 
-                    <button type="submit" className="btn btn-primary login-submit" disabled={isSubmitting}>
-                        {isSubmitting ? <Loader size="small" message="" /> : "Login"}
+                    <button type="submit" className="login-submit-btn" disabled={isSubmitting}>
+                        {isSubmitting ? <Loader size="small" message="" /> : "VERIFY & ENTER"}
                     </button>
                 </form>
 
                 <div className="login-footer">
-                    <p>Don't have an account? <Link to="/register">Register here</Link></p>
+                    <p>
+                        Don't have an account? <Link to="/register">Register here</Link>
+                    </p>
                 </div>
             </div>
         </div>

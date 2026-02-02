@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useRole } from "../hooks/useRole";
 import './comp_css/Sidebar.css';
 
-const Sidebar = ({ isOpen }) => {
+const Sidebar = () => {
     const { role } = useRole();
 
     const menuItems = [
@@ -16,8 +16,6 @@ const Sidebar = ({ isOpen }) => {
         { path: "/alumni-directory", label: "Alumni Network", icon: "🌐", roles: ["STUDENT", "STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
         { path: "/profile", label: "My Profile", icon: "👤", roles: ["STUDENT", "STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
     ];
-
-    if (!isOpen) return null;
 
     return (
         <aside className="sidebar">
