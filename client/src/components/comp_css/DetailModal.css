@@ -1,0 +1,119 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* Ensure top isn't cut off */
+    z-index: 9999;
+    /* Highest priority */
+    padding: 80px 20px;
+    /* Space for the floating close button */
+    overflow-y: auto;
+    /* Allow overlay itself to scroll if needed */
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background: var(--bg-white);
+    width: 100%;
+    max-width: 1000px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid var(--accent-line);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.15);
+    animation: modalScaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 4px;
+}
+
+@keyframes modalScaleUp {
+    from {
+        opacity: 0;
+        transform: scale(0.98) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-close {
+    position: fixed;
+    top: 40px;
+    right: 40px;
+    background: white;
+    border: 1px solid var(--text-charcoal);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1010;
+    transition: all 0.3s;
+    font-size: 18px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.modal-close:hover {
+    background: var(--text-charcoal);
+    color: white;
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 0;
+    /* Let internal structure define padding */
+}
+
+/* Modal Content Structure */
+.modal-article {
+    padding: 60px;
+}
+
+.modal-article-header {
+    border-bottom: 2px solid var(--text-charcoal);
+    padding-bottom: 30px;
+    margin-bottom: 40px;
+}
+
+.modal-layout {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 60px;
+}
+
+.section-label {
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    display: block;
+}
+
+@media (max-width: 900px) {
+    .modal-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .modal-article {
+        padding: 40px 24px;
+    }
+
+    .modal-close {
+        top: 20px;
+        right: 20px;
+        width: 32px;
+        height: 32px;
+    }
+}

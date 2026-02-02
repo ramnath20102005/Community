@@ -1,0 +1,4 @@
+/* Cleaned up default styles which were interfering with the custom layout */
+#root {
+  width: 100%;
+}

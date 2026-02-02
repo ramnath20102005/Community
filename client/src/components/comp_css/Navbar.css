@@ -1,0 +1,121 @@
+/**
+ * NAVBAR - Editorial Style
+ * Minimal, thin, magazine masthead inspired
+ */
+
+.navbar {
+    background: var(--bg-white);
+    border-bottom: var(--border-thin);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: var(--space-sm) 0;
+    transition: var(--transition-base);
+}
+
+.navbar-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.menu-toggle {
+    background: transparent;
+    border: none;
+    font-size: var(--text-xl);
+    color: var(--text-charcoal);
+    cursor: pointer;
+    padding: 0;
+    transition: var(--transition-fast);
+}
+
+.menu-toggle:hover {
+    color: var(--accent-olive);
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.navbar-brand h3 {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-wider);
+    margin: 0;
+    color: var(--text-charcoal);
+}
+
+.navbar-logo {
+    width: 32px;
+    height: 32px;
+    background: var(--text-charcoal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg-ivory);
+    font-weight: var(--weight-bold);
+    font-size: var(--text-sm);
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.navbar-user {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.navbar-user-name {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--text-charcoal);
+    letter-spacing: var(--tracking-wide);
+}
+
+.navbar-user-role {
+    font-size: var(--text-xs);
+    color: var(--accent-olive);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    font-weight: var(--weight-medium);
+}
+
+.logout-btn {
+    font-size: var(--text-xs);
+    padding: 8px 20px;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 0 var(--space-sm);
+    }
+
+    .navbar-brand h3 {
+        font-size: var(--text-base);
+    }
+
+    .navbar-user-name {
+        display: none;
+    }
+}

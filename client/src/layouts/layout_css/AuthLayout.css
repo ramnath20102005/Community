@@ -1,0 +1,103 @@
+/**
+ * AUTH LAYOUT - Editorial Background
+ * Calm, paper-like feel with minimal decoration
+ */
+
+.auth-layout {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+    background: var(--bg-ivory);
+    position: relative;
+    overflow: hidden;
+    /* Prevent background scrolling */
+}
+
+/* Subtle texture overlay (optional) */
+.auth-layout::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        repeating-linear-gradient(0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.01) 2px,
+            rgba(0, 0, 0, 0.01) 4px);
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+.auth-layout-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 10px;
+    /* Hide scrollbar for clean look but allow scroll */
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-olive) transparent;
+}
+
+.auth-layout-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.auth-layout-content::-webkit-scrollbar-thumb {
+    background: var(--accent-olive);
+    border-radius: 10px;
+}
+
+.auth-layout-footer {
+    position: relative;
+    z-index: 1;
+    margin-top: var(--space-lg);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    font-weight: var(--weight-normal);
+    letter-spacing: var(--tracking-wide);
+}
+
+/* Decorative corner elements (minimal) */
+.auth-decoration {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border: var(--border-thin);
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.auth-decoration-tl {
+    top: 0;
+    left: 0;
+    border-right: none;
+    border-bottom: none;
+}
+
+.auth-decoration-br {
+    bottom: 0;
+    right: 0;
+    border-left: none;
+    border-top: none;
+}
+
+@media (max-width: 768px) {
+    .auth-layout {
+        padding: var(--space-md) var(--space-sm);
+    }
+
+    .auth-decoration {
+        width: 100px;
+        height: 100px;
+    }
+}

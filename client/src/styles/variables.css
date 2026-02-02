@@ -1,0 +1,111 @@
+/**
+ * EDITORIAL DESIGN SYSTEM
+ * Inspired by fashion magazines and graduation portfolios
+ * Philosophy: Calm, Sophisticated, Timeless
+ */
+
+:root {
+    /* --- Editorial Color Palette --- */
+    --bg-ivory: #f5f4f1;
+    /* Main background - paper feel */
+    --bg-warm: #f2efe9;
+    /* Secondary background */
+    --bg-white: #ffffff;
+
+    --text-charcoal: #2b2b2b;
+    /* Primary text */
+    --text-grey: #6b6b6b;
+    /* Secondary text */
+    --text-muted: #9a9a9a;
+    /* Tertiary text */
+
+    --accent-olive: #8b8b7a;
+    /* Subtle accent */
+    --accent-line: rgba(0, 0, 0, 0.1);
+    /* Divider lines */
+
+    /* --- Typography System --- */
+    /* Serif for Headings (Editorial Feel) */
+    --font-heading: 'Playfair Display', 'Libre Baskerville', Georgia, serif;
+
+    /* Sans-serif for Body (Clean & Light) */
+    --font-body: 'Inter', 'Lato', 'DM Sans', system-ui, sans-serif;
+
+    /* Font Sizes */
+    --text-xs: 0.75rem;
+    /* 12px */
+    --text-sm: 0.875rem;
+    /* 14px */
+    --text-base: 1rem;
+    /* 16px */
+    --text-lg: 1.125rem;
+    /* 18px */
+    --text-xl: 1.5rem;
+    /* 24px */
+    --text-2xl: 2rem;
+    /* 32px */
+    --text-3xl: 3rem;
+    /* 48px */
+    --text-4xl: 4rem;
+    /* 64px */
+    --text-5xl: 5rem;
+    /* 80px */
+
+    /* Font Weights */
+    --weight-light: 300;
+    --weight-normal: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+
+    /* Line Heights */
+    --leading-tight: 1.2;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.8;
+
+    /* Letter Spacing (Editorial) */
+    --tracking-tight: -0.02em;
+    --tracking-normal: 0;
+    --tracking-wide: 0.05em;
+    --tracking-wider: 0.1em;
+
+    /* --- Spacing System (Generous) --- */
+    --space-xs: 0.5rem;
+    /* 8px */
+    --space-sm: 1rem;
+    /* 16px */
+    --space-md: 2rem;
+    /* 32px */
+    --space-lg: 4rem;
+    /* 64px */
+    --space-xl: 6rem;
+    /* 96px */
+    --space-2xl: 8rem;
+    /* 128px */
+
+    /* --- Layout --- */
+    --max-width: 1400px;
+    --content-width: 800px;
+
+    /* --- Borders & Dividers --- */
+    --border-thin: 1px solid var(--accent-line);
+    --border-accent: 1px solid var(--accent-olive);
+
+    /* --- Transitions (Slow & Elegant) --- */
+    --transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.2s ease;
+
+    /* --- Shadows (Minimal) --- */
+    --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.04);
+    --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* --- Dark Mode (Optional) --- */
+[data-theme='dark'] {
+    --bg-ivory: #1a1a1a;
+    --bg-warm: #242424;
+    --text-charcoal: #f5f4f1;
+    --text-grey: #b0b0b0;
+    --accent-line: rgba(255, 255, 255, 0.1);
+}
