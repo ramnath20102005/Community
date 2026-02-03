@@ -30,13 +30,23 @@ const AlumniDashboard = () => {
         if (user) fetchMyActivity();
     }, [user]);
 
+    const handleDelete = async (postId) => {
+        if (!window.confirm("Permanently remove this publication?")) return;
+        try {
+            await postService.deletePost(postId);
+            setMyPosts(myPosts.filter(p => p._id !== postId));
+        } catch (err) {
+            console.error("Delete failed:", err);
+            alert("Failed to delete publication.");
+        }
+    };
+
     const jobCount = myPosts.filter(p => p.type === 'JOB_POST').length;
     const eventCount = myPosts.filter(p => p.type !== 'JOB_POST').length;
 
     const stats = [
         { label: "Jobs Posted", value: jobCount, icon: "💼", sub: "Active publications" },
         { label: "Events Shared", value: eventCount, icon: "🏛️", sub: "Campus updates" },
-
         { label: "Contributions", value: jobCount + eventCount, icon: "✨", sub: "Total activity" },
     ];
 
@@ -85,7 +95,16 @@ const AlumniDashboard = () => {
                                     <h4 className="activity-title">{post.title}</h4>
                                     <p className="activity-desc">{post.content.substring(0, 120)}...</p>
                                 </div>
-                                <Link to="/general" className="btn" style={{ fontSize: '10px', padding: '10px 20px' }}>Manage</Link>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                    <Link to="/general" className="btn btn-outline" style={{ fontSize: '10px', padding: '10px 15px' }}>View</Link>
+                                    <button
+                                        onClick={() => handleDelete(post._id)}
+                                        className="btn"
+                                        style={{ fontSize: '10px', padding: '10px 15px', color: '#ff4d4f', border: '1px solid #ff4d4f' }}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
                             </div>
                         )) : (
                             <div className="empty-state-container">

@@ -69,10 +69,7 @@ const GeneralHub = () => {
         }
     };
 
-    const handleEdit = (item) => {
-        const path = item.type === 'JOB_POST' ? `/jobs/edit/${item._id}` : `/events/edit/${item._id}`;
-        navigate(path);
-    };
+
 
     return (
         <div className="hub-container fade-in">
@@ -214,11 +211,10 @@ const GeneralHub = () => {
                                     </section>
                                 )}
 
-                                {isAuthor(selectedItem) && (
+                                {(isAuthor(selectedItem) || role === 'ADMIN') && (
                                     <div className="detail-actions-box">
-                                        <p>Management controls for your publication.</p>
+                                        <p>{role === 'ADMIN' && !isAuthor(selectedItem) ? "Administrative moderation controls." : "Management controls for your publication."}</p>
                                         <div className="actions-btns">
-                                            <button onClick={() => handleEdit(selectedItem)} className="btn btn-primary">Update</button>
                                             <button onClick={() => handleDelete(selectedItem._id)} className="btn btn-outline">Remove</button>
                                         </div>
                                     </div>

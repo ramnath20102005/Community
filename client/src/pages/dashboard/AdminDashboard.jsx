@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import userService from "../../services/user.service";
+import postService from "../../services/post.service";
 import Card from "../../components/Card";
 import Loader from "../../components/Loader";
 import ErrorMessage from "../../components/ErrorMessage";
@@ -14,7 +15,9 @@ const AdminDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-    const [activeTab, setActiveTab] = useState("users"); // 'analytics' or 'users'
+    const [activeTab, setActiveTab] = useState("users"); // 'analytics', 'users', 'content'
+    const [posts, setPosts] = useState([]);
+    const [contentLoading, setContentLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [filterRole, setFilterRole] = useState("ALL");
 
@@ -26,6 +29,7 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         fetchUsers();
+        fetchPosts();
     }, []);
 
     const fetchUsers = async () => {
@@ -37,6 +41,29 @@ const AdminDashboard = () => {
             setError("Failed to load users data.");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchPosts = async () => {
+        try {
+            setContentLoading(true);
+            const data = await postService.getAllPosts();
+            setPosts(data);
+        } catch (err) {
+            setError("Failed to load hub content.");
+        } finally {
+            setContentLoading(false);
+        }
+    };
+
+    const handleDeletePost = async (postId) => {
+        if (!window.confirm("Permanently delete this hub item?")) return;
+        try {
+            await postService.deletePost(postId);
+            setSuccess("Content removed successfully.");
+            setPosts(posts.filter(p => p._id !== postId));
+        } catch (err) {
+            setError("Failed to delete content.");
         }
     };
 
@@ -76,6 +103,7 @@ const AdminDashboard = () => {
         students: users.filter(u => u.role === 'STUDENT').length,
         alumni: users.filter(u => u.role === 'ALUMNI').length,
         clubMembers: users.filter(u => u.isClubMember).length,
+        posts: posts.length
     };
 
     const filteredUsers = users.filter(u => {
@@ -99,7 +127,7 @@ const AdminDashboard = () => {
                     <p>Manage users, analytics, and permissions.</p>
                 </div>
                 <div className="admin-actions">
-                    <button className="btn btn-outline" onClick={fetchUsers}>Refresh Data</button>
+                    <button className="btn btn-outline" onClick={() => { fetchUsers(); fetchPosts(); }}>Refresh Data</button>
                 </div>
             </div>
 
@@ -112,6 +140,12 @@ const AdminDashboard = () => {
                     onClick={() => setActiveTab('users')}
                 >
                     User Management
+                </button>
+                <button
+                    className={`admin-tab ${activeTab === 'content' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('content')}
+                >
+                    Content Moderation
                 </button>
                 <button
                     className={`admin-tab ${activeTab === 'analytics' ? 'active' : ''}`}
@@ -149,12 +183,59 @@ const AdminDashboard = () => {
                                 <p style={{ fontSize: '11px', marginTop: '4px' }}>With posting privileges</p>
                             </div>
                             <div className="text-center">
-                                <h4 style={{ fontSize: '32px', marginBottom: '8px' }}>{users.filter(u => u.role === 'ADMIN').length}</h4>
-                                <span className="analytics-label">Admins</span>
-                                <p style={{ fontSize: '11px', marginTop: '4px' }}>System moderators</p>
+                                <h4 style={{ fontSize: '32px', marginBottom: '8px' }}>{analytics.posts}</h4>
+                                <span className="analytics-label">Total Posts</span>
+                                <p style={{ fontSize: '11px', marginTop: '4px' }}>In General Hub</p>
                             </div>
                         </div>
                     </Card>
+                </div>
+            ) : activeTab === 'content' ? (
+                <div className="content-management-view fade-in">
+                    <div className="user-table-container">
+                        <table className="user-table">
+                            <thead>
+                                <tr>
+                                    <th>Content Overview</th>
+                                    <th>Type</th>
+                                    <th>Author</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {posts.map(p => (
+                                    <tr key={p._id}>
+                                        <td>
+                                            <div style={{ fontWeight: 'bold' }}>{p.title}</div>
+                                            <div style={{ fontSize: '11px', color: 'var(--text-muted)', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                {p.content}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span className="badge-category" style={{ fontSize: '9px' }}>{p.type}</span>
+                                        </td>
+                                        <td>
+                                            <div style={{ fontSize: '12px' }}>{p.author?.name || 'Unknown'}</div>
+                                            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{p.author?.role}</div>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className="btn btn-outline btn-sm"
+                                                onClick={() => handleDeletePost(p._id)}
+                                                style={{ color: '#ff4d4f', borderColor: '#ff4d4f' }}
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        {posts.length === 0 && !contentLoading && (
+                            <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No content found in the hub.</div>
+                        )}
+                        {contentLoading && <Loader />}
+                    </div>
                 </div>
             ) : (
                 <div className="user-management-view fade-in">

@@ -16,11 +16,11 @@ const postSchema = new mongoose.Schema({
         default: 'GENERAL'
     },
     image: {
-        type: String, // Main image URL
+        type: String, // Base64 encoded main image
         default: null
     },
     images: [{
-        type: String // Multiple image URLs
+        type: String // Multiple Base64 encoded images
     }],
     attachments: [{
         name: String,

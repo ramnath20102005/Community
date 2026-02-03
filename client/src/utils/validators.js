@@ -15,30 +15,59 @@ export const validators = {
         return "";
     },
 
-    /**
-     * Specialized Kongu email validator
-     */
     konguEmail: (value) => {
         if (!value) return "Email is required";
         if (!value.endsWith("@kongu.edu")) {
             return "Registration is exclusive to @kongu.edu email addresses";
         }
-        // Further pattern check (optional but recommended based on previous logs)
+
+        // Allow special system admin email
+        if (value.toLowerCase() === "admin@kongu.edu") return "";
+
         const pattern = /\.(\d{2})([a-z]{3})@kongu\.edu$/i;
-        if (!pattern.test(value)) {
+        const match = value.match(pattern);
+
+        if (!match) {
             return "Format: name.yearDept@kongu.edu (e.g., student.23cse@kongu.edu)";
         }
+
+        const yearDigits = parseInt(match[1]);
+        const currentYearShort = new Date().getFullYear() % 100; // e.g., 26
+
+        // Range: 01 (2001) to currentYear (e.g., 26)
+        if (yearDigits < 1 || yearDigits > currentYearShort) {
+            return `Year must be between 01 and ${currentYearShort < 10 ? '0' + currentYearShort : currentYearShort}`;
+        }
+
         return "";
     },
 
     /**
-     * Validate password strength
+     * Validate password strength with specific error reporting
      */
     password: (value) => {
         if (!value) return "Password is required";
-        if (value.length < 6) {
-            return "Password must be at least 6 characters long";
+
+        if (value.length < 8) {
+            return "Password must be at least 8 characters long";
         }
+
+        if (!/[A-Z]/.test(value)) {
+            return "Password must contain at least one uppercase letter (A-Z)";
+        }
+
+        if (!/[a-z]/.test(value)) {
+            return "Password must contain at least one lowercase letter (a-z)";
+        }
+
+        if (!/[0-9]/.test(value)) {
+            return "Password must contain at least one numeric digit (0-9)";
+        }
+
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+            return "Password must contain at least one special character (!@#$%^&*)";
+        }
+
         return "";
     },
 

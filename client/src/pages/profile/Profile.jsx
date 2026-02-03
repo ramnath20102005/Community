@@ -122,14 +122,42 @@ const Profile = () => {
                         </div>
 
                         <div className="login-form-group">
-                            <label>Profile Image URL</label>
-                            <input
-                                type="text"
-                                name="profileImage"
-                                value={form.profileImage}
-                                onChange={handleChange}
-                                placeholder="Link to your professional photo"
-                            />
+                            <label>Profile Image</label>
+                            <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                                <div
+                                    onClick={() => document.getElementById('profile-upload').click()}
+                                    className="btn btn-outline"
+                                    style={{ fontSize: '11px', flex: 1, padding: '12px', textAlign: 'center' }}
+                                >
+                                    Choose Photo
+                                </div>
+                                <input
+                                    id="profile-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    hidden
+                                    onChange={async (e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            const reader = new FileReader();
+                                            reader.readAsDataURL(file);
+                                            reader.onload = () => {
+                                                setForm({ ...form, profileImage: reader.result });
+                                            };
+                                        }
+                                    }}
+                                />
+                                {form.profileImage && (
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline"
+                                        style={{ borderColor: '#ff4d4f', color: '#ff4d4f', padding: '12px' }}
+                                        onClick={() => setForm({ ...form, profileImage: "" })}
+                                    >
+                                        Remove
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         <div className="divider-short" style={{ margin: '20px 0' }}></div>

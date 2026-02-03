@@ -62,7 +62,7 @@ const userSchema = new mongoose.Schema({
         default: ""
     },
     profileImage: {
-        type: String,
+        type: String, // Base64 encoded profile photo
         default: ""
     },
     createdAt: {

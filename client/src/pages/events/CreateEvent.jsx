@@ -89,6 +89,15 @@ const CreateEvent = () => {
     }, [isPreview]);
 
     // --- Media Handlers ---
+    const fileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
     const handleFileUpload = async (e, type) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
@@ -96,15 +105,22 @@ const CreateEvent = () => {
         try {
             setUploading(true);
             setError("");
-            const response = await postService.uploadMultipleFiles(files);
 
             if (type === 'image') {
-                setUploadedImages(prev => [...prev, ...response.files]);
+                const base64Images = await Promise.all(
+                    files.map(async (file) => {
+                        const base64 = await fileToBase64(file);
+                        return { url: base64, name: file.name };
+                    })
+                );
+                setUploadedImages(prev => [...prev, ...base64Images]);
             } else {
+                // Documents still use server upload for now, or we can handle them separately
+                const response = await postService.uploadMultipleFiles(files);
                 setUploadedDocs(prev => [...prev, ...response.files]);
             }
         } catch (err) {
-            setError("Failed to upload files. Please ensure the server is running.");
+            setError("Failed to process files. Please try again.");
         } finally {
             setUploading(false);
         }
@@ -127,8 +143,8 @@ const CreateEvent = () => {
                 const file = item.getAsFile();
                 try {
                     setUploading(true);
-                    const response = await postService.uploadFile(file);
-                    setUploadedImages(prev => [...prev, response]);
+                    const base64 = await fileToBase64(file);
+                    setUploadedImages(prev => [...prev, { url: base64, name: file.name }]);
                 } catch (err) {
                     setError("Failed to process pasted image.");
                 } finally {

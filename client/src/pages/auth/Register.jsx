@@ -24,7 +24,7 @@ const Register = () => {
     const validationRules = {
         name: validators.required("Full Name"),
         email: validators.konguEmail,
-        password: composeValidators(validators.password, validators.minLength(6, "Password")),
+        password: validators.password,
         confirmPassword: validators.confirmPassword,
     };
 

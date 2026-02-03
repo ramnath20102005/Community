@@ -11,7 +11,7 @@ const Sidebar = () => {
         { path: "/alumni/dashboard", label: "Dashboard", icon: "�", roles: ["ALUMNI"] },
         { path: "/admin/dashboard", label: "Admin Panel", icon: "🔐", roles: ["ADMIN"] },
         { path: "/events/create", label: "Share Event", icon: "✍️", roles: ["STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
-        { path: "/jobs/create", label: "Post Job", icon: "➕", roles: ["ALUMNI", "ADMIN"] },
+        { path: "/jobs/create", label: "Post Job", icon: "➕", roles: ["ALUMNI"] },
         { path: "/alumni-directory", label: "Alumni Network", icon: "👥", roles: ["STUDENT", "STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
         { path: "/profile", label: "My Profile", icon: "👤", roles: ["STUDENT", "STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
     ];

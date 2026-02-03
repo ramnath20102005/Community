@@ -17,13 +17,8 @@ const Login = () => {
     const [error, setError] = useState("");
 
     const validationRules = {
-        email: (value) => {
-            const basic = validators.email(value);
-            if (basic) return basic;
-            if (!value.endsWith("@kongu.edu")) return "Please use your @kongu.edu email";
-            return "";
-        },
-        password: validators.password,
+        email: validators.konguEmail,
+        password: validators.required("Password"),
     };
 
     const { values, errors, handleChange, handleBlur, handleSubmit, isSubmitting } =

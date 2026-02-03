@@ -16,14 +16,25 @@ export const parseKonguEmail = (email) => {
         return null;
     }
 
+    if (email.toLowerCase() === "admin@kongu.edu") {
+        return { joiningYear: 2000, department: "ROOT" };
+    }
+
     const username = email.split("@")[0];
     const match = username.match(/\.(\d{2})([a-z]{3})$/i);
 
     if (!match) return null;
 
     const [, yearDigits, department] = match;
-    const currentCentury = Math.floor(new Date().getFullYear() / 100) * 100;
-    const joiningYear = currentCentury + parseInt(yearDigits, 10);
+    const yearNum = parseInt(yearDigits, 10);
+    const currentYearShort = new Date().getFullYear() % 100;
+
+    // Range: 01 (2001) to currentYear (e.g., 26)
+    if (yearNum < 1 || yearNum > currentYearShort) {
+        return null;
+    }
+
+    const joiningYear = 2000 + yearNum;
 
     return {
         joiningYear,
