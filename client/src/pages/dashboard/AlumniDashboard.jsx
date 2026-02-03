@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import postService from "../../services/post.service";
 import Loader from "../../components/Loader";
 import Card from "../../components/Card";
+import JobApplicantsModal from "../../components/JobApplicantsModal";
+import { Briefcase, Landmark, Sparkles } from "lucide-react";
 import '../page_css/Dashboard.css';
 
 /**
@@ -14,6 +16,8 @@ const AlumniDashboard = () => {
     const { user } = useAuth();
     const [myPosts, setMyPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedPost, setSelectedPost] = useState(null);
+    const [isAppsModalOpen, setIsAppsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchMyActivity = async () => {
@@ -34,10 +38,9 @@ const AlumniDashboard = () => {
     const eventCount = myPosts.filter(p => p.type !== 'JOB_POST').length;
 
     const stats = [
-        { label: "Jobs Posted", value: jobCount, icon: "💼", sub: "Active publications" },
-        { label: "Events Shared", value: eventCount, icon: "🏛️", sub: "Campus updates" },
-
-        { label: "Contributions", value: jobCount + eventCount, icon: "✨", sub: "Total activity" },
+        { label: "Jobs Posted", value: jobCount, icon: <Briefcase size={24} />, sub: "Active publications" },
+        { label: "Events Shared", value: eventCount, icon: <Landmark size={24} />, sub: "Campus updates" },
+        { label: "Contributions", value: jobCount + eventCount, icon: <Sparkles size={24} />, sub: "Total activity" },
     ];
 
     return (
@@ -85,7 +88,20 @@ const AlumniDashboard = () => {
                                     <h4 className="activity-title">{post.title}</h4>
                                     <p className="activity-desc">{post.content.substring(0, 120)}...</p>
                                 </div>
-                                <Link to="/general" className="btn" style={{ fontSize: '10px', padding: '10px 20px' }}>Manage</Link>
+                                {post.type === 'JOB_POST' ? (
+                                    <button 
+                                        onClick={() => {
+                                            setSelectedPost(post);
+                                            setIsAppsModalOpen(true);
+                                        }} 
+                                        className="btn btn-primary" 
+                                        style={{ fontSize: '10px', padding: '10px 20px', background: 'var(--accent-olive)', border: 'none' }}
+                                    >
+                                        View Applicants
+                                    </button>
+                                ) : (
+                                    <Link to="/general" className="btn" style={{ fontSize: '10px', padding: '10px 20px' }}>View Post</Link>
+                                )}
                             </div>
                         )) : (
                             <div className="empty-state-container">
@@ -100,6 +116,15 @@ const AlumniDashboard = () => {
                     </div>
                 )}
             </div>
+
+            {selectedPost && (
+                <JobApplicantsModal 
+                    isOpen={isAppsModalOpen}
+                    onClose={() => setIsAppsModalOpen(false)}
+                    jobId={selectedPost._id}
+                    jobTitle={selectedPost.title}
+                />
+            )}
         </div>
     );
 };

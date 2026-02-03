@@ -4,6 +4,7 @@ import userService from "../../services/user.service";
 import Loader from "../../components/Loader";
 import SuccessMessage from "../../components/SuccessMessage";
 import ErrorMessage from "../../components/ErrorMessage";
+import { Briefcase, MapPin } from "lucide-react";
 import { fileToBase64 } from "../../utils/fileToBase64";
 import { validators } from "../../utils/validators";
 import '../page_css/Dashboard.css';
@@ -25,6 +26,8 @@ const Profile = () => {
         bio: user?.bio || "",
         linkedIn: user?.linkedIn || "",
         profileImage: user?.profileImage || "",
+        contactEmail: user?.contactEmail || "",
+        phoneNumber: user?.phoneNumber || "",
     });
 
     const handleChange = (e) => {
@@ -47,9 +50,15 @@ const Profile = () => {
             }
         }
 
+        if (form.phoneNumber && !/^[0-9]{10}$/.test(form.phoneNumber)) {
+            setError("Please enter a valid 10-digit phone number.");
+            setLoading(false);
+            return;
+        }
+
         try {
             const response = await userService.updateProfile(form);
-            setSuccess("Profile updated successfully! 🌿");
+            setSuccess("Profile updated successfully!");
             // Update auth context with new user data
             login(response.user, localStorage.getItem('token'));
         } catch (err) {
@@ -69,7 +78,7 @@ const Profile = () => {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 600px) 1fr', gap: '48px', alignItems: 'start' }}>
+            <div className="profile-grid">
                 <div className="card-editorial shadow-magazine">
                     {success && <SuccessMessage message={success} onClose={() => setSuccess("")} />}
                     {error && <ErrorMessage message={error} onClose={() => setError("")} />}
@@ -87,28 +96,53 @@ const Profile = () => {
                         </div>
 
                         {user?.role === 'ALUMNI' && (
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                                <div className="login-form-group">
-                                    <label>Current Organization</label>
-                                    <input
-                                        type="text"
-                                        name="company"
-                                        value={form.company}
-                                        onChange={handleChange}
-                                        placeholder="e.g. Microsoft"
-                                    />
+                            <>
+                                <div className="form-grid">
+                                    <div className="login-form-group">
+                                        <label>Current Organization</label>
+                                        <input
+                                            type="text"
+                                            name="company"
+                                            value={form.company}
+                                            onChange={handleChange}
+                                            placeholder="e.g. Microsoft"
+                                        />
+                                    </div>
+                                    <div className="login-form-group">
+                                        <label>Location</label>
+                                        <input
+                                            type="text"
+                                            name="location"
+                                            value={form.location}
+                                            onChange={handleChange}
+                                            placeholder="e.g. Seattle, WA"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="login-form-group">
-                                    <label>Location</label>
-                                    <input
-                                        type="text"
-                                        name="location"
-                                        value={form.location}
-                                        onChange={handleChange}
-                                        placeholder="e.g. Seattle, WA"
-                                    />
+
+                                <div className="form-grid">
+                                    <div className="login-form-group">
+                                        <label>Direct Contact Email (Public)</label>
+                                        <input
+                                            type="email"
+                                            name="contactEmail"
+                                            value={form.contactEmail}
+                                            onChange={handleChange}
+                                            placeholder="Public contact email"
+                                        />
+                                    </div>
+                                    <div className="login-form-group">
+                                        <label>Professional Mobile No.</label>
+                                        <input
+                                            type="tel"
+                                            name="phoneNumber"
+                                            value={form.phoneNumber}
+                                            onChange={handleChange}
+                                            placeholder="10-digit number"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+                            </>
                         )}
 
                         <div className="login-form-group">
@@ -187,10 +221,14 @@ const Profile = () => {
                         </p>
 
                         {form.company && (
-                            <p style={{ marginTop: '20px', fontWeight: 'bold' }}>💼 {form.company}</p>
+                            <p style={{ marginTop: '20px', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                <Briefcase size={16} /> {form.company}
+                            </p>
                         )}
                         {form.location && (
-                            <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>📍 {form.location}</p>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '8px' }}>
+                                <MapPin size={14} /> {form.location}
+                            </p>
                         )}
                     </div>
                 </div>

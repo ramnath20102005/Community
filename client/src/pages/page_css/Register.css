@@ -5,19 +5,13 @@
 
 .register-page {
     min-height: 100vh;
-    max-height: 100vh;
-    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: var(--bg-ivory);
     padding: 20px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden !important;
+    position: relative;
+    overflow-y: auto;
 }
 
 /* Watermark Background */

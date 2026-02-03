@@ -37,7 +37,7 @@ export const validators = {
 
         // Restriction: year between 01 (2001) and current year
         if (yearDigits < 1 || yearDigits > currentYearDigits) {
-            return `Year must be between 01 and ${currentYearDigits.toString().padStart(2, '0')}`;
+            return `Year must be between 2001 and ${currentYear}`;
         }
         
         return "";

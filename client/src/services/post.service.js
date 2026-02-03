@@ -50,6 +50,16 @@ const postService = {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
         return response.data;
+    },
+
+    applyToJob: async (jobId, applicationData) => {
+        const response = await api.post(`/posts/${jobId}/apply`, applicationData);
+        return response.data;
+    },
+
+    getJobApplications: async (jobId) => {
+        const response = await api.get(`/posts/${jobId}/applications`);
+        return response.data;
     }
 };
 

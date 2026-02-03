@@ -101,19 +101,40 @@
 }
 
 @media (max-width: 900px) {
+    .modal-overlay {
+        padding: 40px 0;
+    }
+
+    .modal-content {
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
     .modal-layout {
         grid-template-columns: 1fr;
         gap: 40px;
     }
 
     .modal-article {
-        padding: 40px 24px;
+        padding: 40px 20px;
     }
 
     .modal-close {
-        top: 20px;
-        right: 20px;
-        width: 32px;
-        height: 32px;
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+        background: rgba(255,255,255,0.9);
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-article {
+        padding: 30px 15px;
+    }
+
+    .section-label {
+        margin-bottom: 12px;
     }
 }

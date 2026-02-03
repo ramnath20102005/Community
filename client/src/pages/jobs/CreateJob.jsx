@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "../../hooks/useForm";
 import { validators } from "../../utils/validators";
+import { fileToBase64 } from "../../utils/fileToBase64";
 import postService from "../../services/post.service";
 import { useAuth } from "../../hooks/useAuth";
 import Loader from "../../components/Loader";
@@ -16,6 +17,9 @@ const CreateJob = () => {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [uploadedImage, setUploadedImage] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef(null);
 
     const isEditMode = !!id;
 
@@ -44,6 +48,8 @@ const CreateJob = () => {
                         salary: job.salary || "",
                         externalLink: job.externalLink || ""
                     });
+                    if (job.image) setUploadedImage(job.image);
+                    else if (job.images && job.images.length > 0) setUploadedImage(job.images[0]);
                 } catch (err) {
                     setError("Failed to load job details. The post might no longer exist.");
                 } finally {
@@ -54,14 +60,42 @@ const CreateJob = () => {
         }
     }, [id, isEditMode, setValues]);
 
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            setUploading(true);
+            const base64 = await fileToBase64(file);
+            setUploadedImage(base64);
+        } catch (err) {
+            setError("Failed to process image.");
+        } finally {
+            setUploading(false);
+        }
+    };
+
     const onSubmit = async (formValues) => {
+        if (!uploadedImage) {
+            setError("A corporate logo or banner is mandatory for job postings.");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
         try {
             setError("");
+            
+            const postData = {
+                ...formValues,
+                type: 'JOB_POST',
+                image: uploadedImage,
+                images: [uploadedImage]
+            };
 
             if (isEditMode) {
-                await postService.updatePost(id, { ...formValues, type: 'JOB_POST' });
+                await postService.updatePost(id, postData);
             } else {
-                await postService.createPost({ ...formValues, type: 'JOB_POST' });
+                await postService.createPost(postData);
             }
 
             setSuccess(true);
@@ -107,6 +141,34 @@ const CreateJob = () => {
 
                     <form onSubmit={handleSubmit(onSubmit)} className="login-form">
                         <div className="login-form-group">
+                            <label>Visual Branding (Company Logo/Banner) *</label>
+                            <div 
+                                onClick={() => fileInputRef.current.click()}
+                                className="upload-area"
+                            >
+                                {uploadedImage ? (
+                                    <>
+                                        <img src={uploadedImage} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                        <div style={{ position: 'absolute', bottom: '15px', right: '15px', background: 'var(--text-charcoal)', color: 'white', padding: '8px 16px', fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold' }}>Replace Image</div>
+                                    </>
+                                ) : (
+                                    <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                                        <div style={{ fontSize: '40px', marginBottom: '10px' }}>🖼️</div>
+                                        <p style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase' }}>{uploading ? 'Processing...' : 'Select Branding Asset'}</p>
+                                        <p style={{ fontSize: '10px', marginTop: '4px' }}>Recommended: 1200x630px JPG/PNG</p>
+                                    </div>
+                                )}
+                            </div>
+                            <input 
+                                type="file" 
+                                hidden 
+                                ref={fileInputRef} 
+                                onChange={handleImageUpload} 
+                                accept="image/*" 
+                            />
+                        </div>
+
+                        <div className="login-form-group">
                             <label>Job Title *</label>
                             <input
                                 type="text"
@@ -120,7 +182,7 @@ const CreateJob = () => {
                             {errors.title && <span className="login-error-text">{errors.title}</span>}
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        <div className="form-grid">
                             <div className="login-form-group">
                                 <label>Company *</label>
                                 <input
@@ -163,7 +225,7 @@ const CreateJob = () => {
                             {errors.content && <span className="login-error-text">{errors.content}</span>}
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        <div className="form-grid">
                             <div className="login-form-group">
                                 <label>Estimated Salary (Optional)</label>
                                 <input

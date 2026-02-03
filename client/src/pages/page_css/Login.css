@@ -5,19 +5,13 @@
 
 .login-page {
     min-height: 100vh;
-    max-height: 100vh;
-    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     background: linear-gradient(135deg, #f5f5f0 0%, #e8e6df 50%, #f0ede5 100%);
     padding: 20px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden !important;
+    position: relative;
+    overflow-y: auto;
 }
 
 /* Animated Background Elements */

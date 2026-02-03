@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import postService from "../../services/post.service";
 import Loader from "../../components/Loader";
 import Card from "../../components/Card";
+import { Newspaper, Calendar, Briefcase } from "lucide-react";
 import '../page_css/Dashboard.css';
 
 /**
@@ -17,9 +18,9 @@ const StudentDashboard = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState([
-        { label: "Community Feed", value: "0", icon: "🗞️" },
-        { label: "Club Events", value: "0", icon: "📅" },
-        { label: "Opportunities", value: "0", icon: "💼" },
+        { label: "Community Feed", value: "0", icon: <Newspaper size={24} /> },
+        { label: "Club Events", value: "0", icon: <Calendar size={24} /> },
+        { label: "Opportunities", value: "0", icon: <Briefcase size={24} /> },
     ]);
 
     useEffect(() => {
@@ -33,9 +34,9 @@ const StudentDashboard = () => {
                 const totalOpp = data.filter(p => p.type === 'JOB_POST' || p.type === 'RESOURCE').length;
 
                 setStats([
-                    { label: "Community Feed", value: totalFeed, icon: "🗞️" },
-                    { label: "Club Events", value: totalEvents, icon: "📅" },
-                    { label: "Opportunities", value: totalOpp, icon: "💼" },
+                    { label: "Community Feed", value: totalFeed, icon: <Newspaper size={24} /> },
+                    { label: "Club Events", value: totalEvents, icon: <Calendar size={24} /> },
+                    { label: "Opportunities", value: totalOpp, icon: <Briefcase size={24} /> },
                 ]);
 
                 setPosts(data.slice(0, 5)); // Only show top 5 in the feed
@@ -53,7 +54,7 @@ const StudentDashboard = () => {
             <div className="dashboard-header">
                 <div>
                     <span className="badge-category">Campus Gateway</span>
-                    <h1>Hello, {user?.name.split(' ')[0]}! 👋</h1>
+                    <h1>Hello, {user?.name.split(' ')[0]}!</h1>
                 </div>
             </div>
 

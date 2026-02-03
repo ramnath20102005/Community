@@ -6,7 +6,10 @@ import postService from "../../services/post.service";
 import Loader from "../../components/Loader";
 import ErrorMessage from "../../components/ErrorMessage";
 import DetailModal from "../../components/DetailModal";
+import JobApplicationModal from "../../components/JobApplicationModal";
 import Card from "../../components/Card";
+import SuccessMessage from "../../components/SuccessMessage";
+import { Briefcase, MapPin, Calendar, Sparkles } from "lucide-react";
 import '../page_css/GeneralHub.css';
 
 /**
@@ -19,12 +22,15 @@ const GeneralHub = () => {
     const { role } = useRole();
     const [posts, setPosts] = useState([]);
     const [filter, setFilter] = useState('ALL');
+    const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
     // Modal state
     const [selectedItem, setSelectedItem] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
 
     useEffect(() => {
         fetchPosts();
@@ -42,6 +48,12 @@ const GeneralHub = () => {
             setLoading(false);
         }
     };
+
+    const filteredPosts = posts.filter(post => {
+        const matchesSearch = (post.author?.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (post.author?.department || "").toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesSearch;
+    });
 
     const openDetails = (item) => {
         setSelectedItem(item);
@@ -88,26 +100,38 @@ const GeneralHub = () => {
                     Stay connected with the pulse of Kongu.
                 </p>
 
-                {/* --- Filters Section --- */}
-                <div className="hub-filters">
-                    <button
-                        className={`filter-btn ${filter === 'ALL' ? 'active' : ''}`}
-                        onClick={() => setFilter('ALL')}
-                    >
-                        Everything
-                    </button>
-                    <button
-                        className={`filter-btn ${filter === 'EVENTS' ? 'active' : ''}`}
-                        onClick={() => setFilter('EVENTS')}
-                    >
-                        Campus Events
-                    </button>
-                    <button
-                        className={`filter-btn ${filter === 'JOBS' ? 'active' : ''}`}
-                        onClick={() => setFilter('JOBS')}
-                    >
-                        Job Hub
-                    </button>
+                {/* --- Search & Filters Bar --- */}
+                <div className="hub-controls" style={{ display: 'flex', gap: '40px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+                    <div className="hub-search-box" style={{ flex: 1, minWidth: '300px' }}>
+                        <span className="section-label" style={{ marginBottom: '12px', display: 'block' }}>Search Feed</span>
+                        <input 
+                            type="text" 
+                            placeholder="Search by name..." 
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{ background: 'var(--bg-warm)', border: 'none', borderBottom: '1px solid var(--accent-line)', padding: '12px 0', fontSize: '15px' }}
+                        />
+                    </div>
+                    <div className="hub-filters">
+                        <button
+                            className={`filter-btn ${filter === 'ALL' ? 'active' : ''}`}
+                            onClick={() => setFilter('ALL')}
+                        >
+                            Everything
+                        </button>
+                        <button
+                            className={`filter-btn ${filter === 'EVENTS' ? 'active' : ''}`}
+                            onClick={() => setFilter('EVENTS')}
+                        >
+                            Campus Events
+                        </button>
+                        <button
+                            className={`filter-btn ${filter === 'JOBS' ? 'active' : ''}`}
+                            onClick={() => setFilter('JOBS')}
+                        >
+                            Job Hub
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -117,9 +141,9 @@ const GeneralHub = () => {
                 <div className="hub-loading"><Loader /></div>
             ) : (
                 <div className="hub-feed">
-                    {posts.length > 0 ? (
+                    {filteredPosts.length > 0 ? (
                         <div className="hub-grid">
-                            {posts.map((post) => (
+                            {filteredPosts.map((post) => (
                                 <Card
                                     key={post._id}
                                     className={`hub-card ${post.type === 'JOB_POST' ? 'job-card' : 'event-card'}`}
@@ -131,8 +155,16 @@ const GeneralHub = () => {
                                         ) : post.images && post.images.length > 0 ? (
                                             <img src={post.images[0]} alt={post.title} />
                                         ) : (
-                                            <div className="card-media-placeholder">
-                                                {post.type === 'JOB_POST' ? '💼' : ''}
+                                            <div className="media-placeholder">
+                                                <div className="media-placeholder-icon">
+                                                    {post.type === 'JOB_POST' ? <Briefcase size={32} /> : <Sparkles size={32} />}
+                                                </div>
+                                                <div className="media-placeholder-text">
+                                                    {post.title}
+                                                </div>
+                                                <div className="media-placeholder-decoration">
+                                                    {post.type === 'JOB_POST' ? 'Career' : 'Event'}
+                                                </div>
                                             </div>
                                         )}
                                         <div className="card-type-tag">
@@ -153,13 +185,13 @@ const GeneralHub = () => {
                                         <div className="card-footer">
                                             {post.type === 'JOB_POST' ? (
                                                 <div className="job-info">
-                                                    <span>📍 {post.location}</span>
+                                                    <span><MapPin size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginTop: '-2px', marginRight: '4px' }} /> {post.location}</span>
                                                     {post.salary && <span className="salary">{post.salary}</span>}
                                                 </div>
                                             ) : (
                                                 <div className="event-info">
-                                                    <span>📅 {post.eventDate ? new Date(post.eventDate).toLocaleDateString() : 'TBA'}</span>
-                                                    <span>📍 {post.location || 'Campus'}</span>
+                                                    <span><Calendar size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginTop: '-2px', marginRight: '4px' }} /> {post.eventDate ? new Date(post.eventDate).toLocaleDateString() : 'TBA'}</span>
+                                                    <span><MapPin size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginTop: '-2px', marginRight: '4px' }} /> {post.location || 'Campus'}</span>
                                                 </div>
                                             )}
                                         </div>
@@ -252,11 +284,42 @@ const GeneralHub = () => {
                                         </a>
                                     </div>
                                 )}
+
+                                {selectedItem.type === 'JOB_POST' && role === 'STUDENT' && !isAuthor(selectedItem) && (
+                                    <div className="sidebar-block">
+                                        <h4 className="section-label">Interested?</h4>
+                                        <button 
+                                            className="btn btn-primary detail-cta" 
+                                            style={{ background: 'var(--accent-olive)', border: 'none', width: '100%' }}
+                                            onClick={() => setIsApplyModalOpen(true)}
+                                        >
+                                            Express Interest
+                                        </button>
+                                        <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px', textAlign: 'center' }}>
+                                            The creator will be notified of your profile & resume.
+                                        </p>
+                                    </div>
+                                )}
                             </aside>
                         </div>
                     </div>
                 )}
             </DetailModal>
+
+            {successMessage && <SuccessMessage message={successMessage} onClose={() => setSuccessMessage("")} />}
+
+            {selectedItem && (
+                <JobApplicationModal 
+                    isOpen={isApplyModalOpen}
+                    onClose={() => setIsApplyModalOpen(false)}
+                    jobId={selectedItem._id}
+                    jobTitle={selectedItem.title}
+                    onSuccess={(msg) => {
+                        setSuccessMessage(msg);
+                        setIsModalOpen(false); // Close the detail modal too
+                    }}
+                />
+            )}
         </div>
     );
 };

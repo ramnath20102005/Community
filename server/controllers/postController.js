@@ -1,4 +1,6 @@
 const Post = require('../models/Post');
+const JobApplication = require('../models/JobApplication');
+const { validateContent } = require('../utils/moderator');
 
 // Get all posts with auto-cleanup of expired ones
 exports.getPosts = async (req, res) => {
@@ -55,6 +57,31 @@ exports.createPost = async (req, res) => {
             salary, images, attachments, externalLinks
         } = req.body;
 
+        // Image Requirement Check
+        if (!req.body.image && (!images || images.length === 0)) {
+            return res.status(400).json({ message: "Visual context (images) is mandatory for all community publications." });
+        }
+
+        // Content Moderation Check
+        const titleScan = validateContent(title);
+        if (!titleScan.isSafe) {
+            return res.status(400).json({ message: `Inappropriate Title: ${titleScan.reason}` });
+        }
+
+        const contentScan = validateContent(content);
+        if (!contentScan.isSafe) {
+            return res.status(400).json({ message: `Inappropriate Content: ${contentScan.reason}` });
+        }
+
+        // Deep Scan for Job specific fields
+        if (type === 'JOB_POST') {
+            const companyScan = validateContent(companyName);
+            if (!companyScan.isSafe) return res.status(400).json({ message: `Inappropriate Company Name: ${companyScan.reason}` });
+
+            const locationScan = validateContent(location);
+            if (!locationScan.isSafe) return res.status(400).json({ message: `Inappropriate Location: ${locationScan.reason}` });
+        }
+
         // Logic for Club Post: Ensure user is authorized
         if (type === 'CLUB_UPDATE' && !req.user.isClubMember && req.user.role !== 'ADMIN') {
             return res.status(403).json({ message: "Only club members can post club updates" });
@@ -106,6 +133,21 @@ exports.updatePost = async (req, res) => {
         // Check if user is author or admin
         if (post.author.toString() !== req.user._id.toString() && req.user.role !== 'ADMIN') {
             return res.status(403).json({ message: "Unauthorized to update this post" });
+        }
+
+        // Content Moderation Check for Updates
+        if (req.body.title) {
+            const titleScan = validateContent(req.body.title);
+            if (!titleScan.isSafe) {
+                return res.status(400).json({ message: `Inappropriate Title: ${titleScan.reason}` });
+            }
+        }
+
+        if (req.body.content) {
+            const contentScan = validateContent(req.body.content);
+            if (!contentScan.isSafe) {
+                return res.status(400).json({ message: `Inappropriate Content: ${contentScan.reason}` });
+            }
         }
 
         // Update fields
@@ -161,6 +203,76 @@ exports.likePost = async (req, res) => {
 
         await post.save();
         res.json(post);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// Apply to a job
+exports.applyToJob = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const job = await Post.findById(id);
+
+        if (!job || job.type !== 'JOB_POST') {
+            return res.status(404).json({ message: "Job posting not found" });
+        }
+
+        // Only students can apply
+        if (req.user.role !== 'STUDENT') {
+            return res.status(403).json({ message: "Only students can express interest in job postings." });
+        }
+
+        // Prevent duplicate applications
+        const existingApplication = await JobApplication.findOne({
+            jobId: id,
+            studentId: req.user._id
+        });
+
+        if (existingApplication) {
+            return res.status(400).json({ message: "You have already applied for this position." });
+        }
+
+        const applicationData = {
+            jobId: id,
+            studentId: req.user._id,
+            alumniId: job.author,
+            name: req.body.name,
+            email: req.user.email,
+            department: req.body.department,
+            batch: req.body.batch,
+            phone: req.body.phone,
+            resumeUrl: req.body.resumeUrl,
+            message: req.body.message
+        };
+
+        const application = new JobApplication(applicationData);
+        await application.save();
+
+        res.status(201).json({ message: "Application submitted successfully!", application });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// Get applications for a job (Alumni/Admin only)
+exports.getJobApplications = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const job = await Post.findById(id);
+
+        if (!job) return res.status(404).json({ message: "Job posting not found" });
+
+        // Authorization check: Only author or admin
+        if (job.author.toString() !== req.user._id.toString() && req.user.role !== 'ADMIN') {
+            return res.status(403).json({ message: "Unauthorized to view applications" });
+        }
+
+        const applications = await JobApplication.find({ jobId: id })
+            .sort({ createdAt: -1 })
+            .populate('studentId', 'name email department batchYear profileImage');
+
+        res.json(applications);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

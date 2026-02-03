@@ -65,6 +65,15 @@ const userSchema = new mongoose.Schema({
         type: String, // Stores profile photo as Base64 string
         default: ""
     },
+    contactEmail: {
+        type: String,
+        trim: true,
+        lowercase: true
+    },
+    phoneNumber: {
+        type: String,
+        trim: true
+    },
     createdAt: {
         type: Date,
         default: Date.now

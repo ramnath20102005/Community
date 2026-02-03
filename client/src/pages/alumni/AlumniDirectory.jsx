@@ -13,6 +13,7 @@ const AlumniDirectory = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
+    const [filterDept, setFilterDept] = useState("ALL");
 
     useEffect(() => {
         const fetchAlumni = async () => {
@@ -30,11 +31,16 @@ const AlumniDirectory = () => {
         fetchAlumni();
     }, []);
 
-    const filteredAlumni = alumni.filter(person =>
-        person.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        person.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        person.department?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredAlumni = alumni.filter(person => {
+        const matchesSearch = person.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            person.department?.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        const matchesDept = filterDept === "ALL" || person.department === filterDept;
+
+        return matchesSearch && matchesDept;
+    });
+
+    const departments = ["ALL", "CSE", "IT", "ECE", "EEE", "MECH", "CIVIL", "MBA", "CHEMICAL", "FOOD TECH"];
 
     return (
         <div className="dashboard fade-in">
@@ -46,29 +52,29 @@ const AlumniDirectory = () => {
                 </div>
             </div>
 
-            <div className="search-bar-container" style={{ marginBottom: '40px' }}>
+            <div className="control-bar">
                 <input
                     type="text"
-                    placeholder="Search by name, company, or department..."
-                    className="login-form-group"
-                    style={{
-                        width: '100%',
-                        maxWidth: '500px',
-                        padding: '16px 24px',
-                        fontSize: '15px',
-                        border: 'var(--border-thin)',
-                        borderRadius: '4px',
-                        background: 'var(--bg-ivory)'
-                    }}
+                    placeholder="Search by name or department..."
+                    className="dir-search"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
+                <select 
+                    value={filterDept} 
+                    onChange={(e) => setFilterDept(e.target.value)}
+                    className="dir-select"
+                >
+                    {departments.map(dept => (
+                        <option key={dept} value={dept}>{dept === 'ALL' ? 'All Departments' : dept}</option>
+                    ))}
+                </select>
             </div>
 
             {error && <ErrorMessage message={error} onClose={() => setError("")} />}
 
             {loading ? <Loader /> : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '32px' }}>
+                <div className="directory-grid">
                     {filteredAlumni.map((person) => (
                         <div key={person._id} className="card-editorial fade-in shadow-magazine" style={{ display: 'flex', flexDirection: 'column' }}>
                             <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '24px' }}>

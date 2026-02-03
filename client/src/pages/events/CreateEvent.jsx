@@ -155,6 +155,13 @@ const CreateEvent = () => {
     const togglePreview = (e) => {
         e.preventDefault();
         const isValid = validate();
+        
+        if (uploadedImages.length === 0) {
+            setError("Visual context is mandatory. Please upload at least one image.");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
         if (isValid) {
             // Validate External Links
             for (const link of externalLinks) {
@@ -308,7 +315,7 @@ const CreateEvent = () => {
                     </div>
                 </div>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '40px', opacity: loading ? 0.5 : 1 }}>
+                <div className="create-event-layout" style={{ opacity: loading ? 0.5 : 1 }}>
                     <Card className="form-card">
                         <form className="event-form">
                             <div className="form-group">
@@ -420,10 +427,10 @@ const CreateEvent = () => {
                                     </button>
                                     <input type="file" multiple accept="image/*" hidden ref={imageInputRef} onChange={(e) => handleFileUpload(e, 'image')} />
 
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '16px' }}>
+                                    <div className="gallery-preview-grid">
                                         {uploadedImages.map((img, i) => (
                                             <div key={i} style={{ height: '60px', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--accent-line)', position: 'relative' }}>
-                                                <img src={img.url} alt="p" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                <img src={img.url} alt="p" style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#f5f5f5' }} />
                                                 <button onClick={() => setUploadedImages(prev => prev.filter((_, idx) => idx !== i))} style={{ position: 'absolute', top: 0, right: 0, background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', cursor: 'pointer', padding: '2px' }}>✕</button>
                                             </div>
                                         ))}

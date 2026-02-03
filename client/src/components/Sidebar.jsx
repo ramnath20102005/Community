@@ -1,19 +1,34 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useRole } from "../hooks/useRole";
+import { useAuth } from "../hooks/useAuth";
+import GuidelinesModal from "./GuidelinesModal";
+import { 
+    Layout, 
+    BarChart3, 
+    ShieldCheck, 
+    CalendarPlus, 
+    Briefcase, 
+    Users, 
+    UserCircle,
+    BookText
+} from "lucide-react";
 import './comp_css/Sidebar.css';
 
 const Sidebar = () => {
     const { role } = useRole();
+    const { user } = useAuth();
+    const [showGuidelines, setShowGuidelines] = useState(false);
 
     const menuItems = [
-        { path: "/general", label: "General Hub", icon: "🌐", roles: ["STUDENT", "STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
-        { path: "/student/dashboard", label: "Dashboard", icon: "📊", roles: ["STUDENT", "STUDENT_EDITOR"] },
-        { path: "/alumni/dashboard", label: "Dashboard", icon: "�", roles: ["ALUMNI"] },
-        { path: "/admin/dashboard", label: "Admin Panel", icon: "🔐", roles: ["ADMIN"] },
-        { path: "/events/create", label: "Share Event", icon: "✍️", roles: ["STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
-        { path: "/jobs/create", label: "Post Job", icon: "➕", roles: ["ALUMNI", "ADMIN"] },
-        { path: "/alumni-directory", label: "Alumni Network", icon: "👥", roles: ["STUDENT", "STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
-        { path: "/profile", label: "My Profile", icon: "👤", roles: ["STUDENT", "STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
+        { path: "/general", label: "General Hub", icon: <BookText size={18} />, roles: ["STUDENT", "STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
+        { path: "/student/dashboard", label: "Dashboard", icon: <BarChart3 size={18} />, roles: ["STUDENT", "STUDENT_EDITOR"] },
+        { path: "/alumni/dashboard", label: "Dashboard", icon: <BarChart3 size={18} />, roles: ["ALUMNI"] },
+        { path: "/admin/dashboard", label: "Admin Panel", icon: <ShieldCheck size={18} />, roles: ["ADMIN"] },
+        { path: "/events/create", label: "Share Event", icon: <CalendarPlus size={18} />, roles: ["STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
+        { path: "/jobs/create", label: "Post Job", icon: <Briefcase size={18} />, roles: ["ALUMNI"] },
+        { path: "/alumni-directory", label: "Alumni Network", icon: <Users size={18} />, roles: ["STUDENT", "STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
+        { path: "/profile", label: "My Profile", icon: <UserCircle size={18} />, roles: ["STUDENT", "STUDENT_EDITOR", "ALUMNI", "ADMIN"] },
     ];
 
     return (
@@ -38,9 +53,16 @@ const Sidebar = () => {
                 <div className="sidebar-help">
                     <p className="sidebar-help-title">Need Help?</p>
                     <p className="sidebar-help-text">Check out our community guidelines.</p>
-                    <button className="btn sidebar-help-btn">Guidelines</button>
+                    <button className="btn sidebar-help-btn" onClick={() => setShowGuidelines(true)}>Guidelines</button>
                 </div>
             )}
+            
+            <GuidelinesModal 
+                isOpen={showGuidelines} 
+                onClose={() => setShowGuidelines(false)} 
+                role={role}
+                userName={user?.name}
+            />
         </aside>
     );
 };

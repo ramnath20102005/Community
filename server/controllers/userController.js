@@ -32,7 +32,7 @@ exports.promoteToClubMember = async (req, res) => {
 // Update Profile
 exports.updateProfile = async (req, res) => {
     try {
-        const { name, company, location, bio, linkedIn, profileImage } = req.body;
+        const { name, company, location, bio, linkedIn, profileImage, contactEmail, phoneNumber } = req.body;
 
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ message: "User not found" });
@@ -43,6 +43,8 @@ exports.updateProfile = async (req, res) => {
         if (bio !== undefined) user.bio = bio;
         if (linkedIn !== undefined) user.linkedIn = linkedIn;
         if (profileImage !== undefined) user.profileImage = profileImage;
+        if (contactEmail !== undefined) user.contactEmail = contactEmail;
+        if (phoneNumber !== undefined) user.phoneNumber = phoneNumber;
 
         await user.save();
 
@@ -58,7 +60,9 @@ exports.updateProfile = async (req, res) => {
                 bio: user.bio,
                 linkedIn: user.linkedIn,
                 profileImage: user.profileImage,
-                isClubMember: user.isClubMember
+                isClubMember: user.isClubMember,
+                contactEmail: user.contactEmail,
+                phoneNumber: user.phoneNumber
             }
         });
     } catch (err) {

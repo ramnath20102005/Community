@@ -8,6 +8,7 @@ import postService from "../../services/post.service";
 import Loader from "../../components/Loader";
 import ErrorMessage from "../../components/ErrorMessage";
 import DetailModal from "../../components/DetailModal";
+import { Sparkles, MapPin, Calendar, Link as LinkIcon, FileText } from "lucide-react";
 import '../page_css/Dashboard.css';
 
 /**
@@ -19,6 +20,8 @@ const EventsList = () => {
     const { hasPermission } = useRole();
     const { user } = useAuth();
     const [events, setEvents] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filterCategory, setFilterCategory] = useState("ALL");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -44,6 +47,15 @@ const EventsList = () => {
             setLoading(false);
         }
     };
+
+    const filteredEvents = events.filter(event => {
+        const matchesSearch = (event.author?.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (event.author?.department || "").toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = filterCategory === "ALL" || event.category === filterCategory;
+        return matchesSearch && matchesCategory;
+    });
+
+    const categories = ["ALL", "Technical", "Cultural", "Workshop", "Hackathon", "Seminar", "Experience"];
 
     const handleDelete = async (postId) => {
         if (window.confirm("Are you sure you want to delete this publication? This action cannot be undone.")) {
@@ -92,37 +104,59 @@ const EventsList = () => {
                 )}
             </div>
 
+            <div className="control-bar" style={{ display: 'flex', gap: '20px', marginTop: '40px', flexWrap: 'wrap' }}>
+                <input
+                    type="text"
+                    placeholder="Search by name or department..."
+                    style={{ flex: 2, minWidth: '300px', padding: '16px 24px', border: '1px solid var(--accent-line)', background: 'var(--bg-white)' }}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <select 
+                    value={filterCategory} 
+                    onChange={(e) => setFilterCategory(e.target.value)}
+                    style={{ flex: 1, minWidth: '200px', padding: '16px 24px', border: '1px solid var(--accent-line)', background: 'var(--bg-white)' }}
+                >
+                    {categories.map(cat => (
+                        <option key={cat} value={cat}>{cat === 'ALL' ? 'All Activities' : cat}</option>
+                    ))}
+                </select>
+            </div>
+
             {error && <ErrorMessage message={error} onClose={() => setError("")} />}
 
             {loading ? <Loader /> : (
-                <div className="events-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '40px', marginTop: '60px' }}>
-                    {events.map((event) => (
+                <div className="events-grid">
+                    {filteredEvents.map((event) => (
                         <Card key={event._id || event.id} className="card-editorial fade-in" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid var(--accent-line)' }}>
                             {/* Premium Media Header */}
-                            {(event.image || (event.images && event.images.length > 0)) && (
-                                <div className="event-image" style={{ height: '300px', background: 'var(--bg-warm)', position: 'relative', overflow: 'hidden' }}>
-                                    <img
-                                        src={event.image || event.images[0]}
-                                        alt={event.title}
-                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                    />
-                                    {event.images && event.images.length > 1 && (
-                                        <div style={{ position: 'absolute', bottom: '20px', left: '20px', background: 'rgba(255,255,255,0.9)', color: 'var(--text-charcoal)', padding: '6px 12px', fontSize: '10px', fontWeight: '700', letterSpacing: '1px' }}>
-                                            + {event.images.length - 1} GALLERY IMAGES
-                                        </div>
-                                    )}
-                                    <span className="sidebar-label" style={{ position: 'absolute', top: '20px', right: '20px', background: 'var(--text-charcoal)', color: 'white', border: 'none' }}>
-                                        {event.type?.replace('_', ' ') || 'General'}
-                                    </span>
-                                </div>
-                            )}
-
-                            <div className="event-details" style={{ padding: '30px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                                {!event.image && !event.images?.length && (
-                                    <span className="sidebar-label" style={{ marginBottom: '16px', display: 'inline-block' }}>
-                                        {event.type?.replace('_', ' ') || 'General'}
-                                    </span>
+                            <div className="event-image" style={{ height: '300px', background: 'var(--bg-warm)', position: 'relative', overflow: 'hidden' }}>
+                                {(event.image || (event.images && event.images.length > 0)) ? (
+                                    <>
+                                        <img
+                                            src={event.image || event.images[0]}
+                                            alt={event.title}
+                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                        />
+                                        {event.images && event.images.length > 1 && (
+                                            <div style={{ position: 'absolute', bottom: '20px', left: '20px', background: 'rgba(255,255,255,0.9)', color: 'var(--text-charcoal)', padding: '6px 12px', fontSize: '10px', fontWeight: '700', letterSpacing: '1px' }}>
+                                                + {event.images.length - 1} GALLERY IMAGES
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="media-placeholder">
+                                        <div className="media-placeholder-icon"><Sparkles size={32} /></div>
+                                        <div className="media-placeholder-text">{event.title}</div>
+                                        <div className="media-placeholder-decoration">Event</div>
+                                    </div>
                                 )}
+                                <span className="sidebar-label" style={{ position: 'absolute', top: '20px', right: '20px', background: 'var(--text-charcoal)', color: 'white', border: 'none', zIndex: 2 }}>
+                                    {event.type?.replace('_', ' ') || 'General'}
+                                </span>
+                            </div>
+
+                            <div className="event-card-body" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
 
                                 <h3 style={{ fontSize: '24px', marginBottom: '16px', lineHeight: '1.3' }}>{event.title}</h3>
 
@@ -218,14 +252,14 @@ const EventsList = () => {
                                 {selectedEvent.location && (
                                     <section style={{ marginBottom: '40px' }}>
                                         <span className="section-label">Location / Venue</span>
-                                        <p style={{ fontSize: '16px', fontWeight: '700', margin: 0 }}>📍 {selectedEvent.location}</p>
+                                        <p style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: '700', margin: 0 }}><MapPin size={18} /> {selectedEvent.location}</p>
                                     </section>
                                 )}
 
                                 {selectedEvent.eventDate && (
                                     <section style={{ marginBottom: '40px' }}>
                                         <span className="section-label">Scheduled For</span>
-                                        <p style={{ fontSize: '16px', fontWeight: '700', margin: 0 }}>📅 {new Date(selectedEvent.eventDate).toLocaleDateString()}</p>
+                                        <p style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: '700', margin: 0 }}><Calendar size={18} /> {new Date(selectedEvent.eventDate).toLocaleDateString()}</p>
                                     </section>
                                 )}
 
@@ -235,14 +269,14 @@ const EventsList = () => {
                                         <div style={{ display: 'grid', gap: '12px', marginTop: '10px' }}>
                                             {selectedEvent.externalLinks?.map((link, idx) => (
                                                 <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer"
-                                                    style={{ display: 'block', fontSize: '12px', color: 'var(--text-charcoal)', textDecoration: 'none', padding: '10px', background: 'var(--bg-white)', border: '1px solid var(--accent-line)' }}>
-                                                    🔗 {link.label || 'View Link'}
+                                                    style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-charcoal)', textDecoration: 'none', padding: '10px', background: 'var(--bg-white)', border: '1px solid var(--accent-line)' }}>
+                                                    <LinkIcon size={14} /> {link.label || 'View Link'}
                                                 </a>
                                             ))}
                                             {selectedEvent.attachments?.map((doc, idx) => (
                                                 <a key={idx} href={doc.url} target="_blank" rel="noopener noreferrer"
-                                                    style={{ display: 'block', fontSize: '12px', color: 'var(--text-charcoal)', textDecoration: 'none', padding: '10px', background: 'var(--bg-white)', border: '1px solid var(--accent-line)' }}>
-                                                    📄 <strong>{doc.name}</strong>
+                                                    style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-charcoal)', textDecoration: 'none', padding: '10px', background: 'var(--bg-white)', border: '1px solid var(--accent-line)' }}>
+                                                    <FileText size={14} /> <strong>{doc.name}</strong>
                                                 </a>
                                             ))}
                                         </div>

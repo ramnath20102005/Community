@@ -1,0 +1,88 @@
+.application-modal-content {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.application-header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--accent-line);
+    padding-bottom: 20px;
+}
+
+.application-header h2 {
+    font-size: 28px;
+    margin-top: 10px;
+    color: var(--text-charcoal);
+}
+
+.application-header p {
+    color: var(--text-grey);
+    margin-top: 5px;
+}
+
+.application-form .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.application-form .full-width {
+    grid-column: 1 / -1;
+}
+
+.application-form .form-group label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    color: var(--text-grey);
+}
+
+.application-form .form-group input,
+.application-form .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--accent-line);
+    border-radius: 4px;
+    background: var(--bg-warm);
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.application-form .form-group input:focus,
+.application-form .form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-olive);
+}
+
+.application-form .form-group input:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+}
+
+.application-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--accent-line);
+}
+
+.error-banner {
+    background: #fff5f5;
+    color: #e53e3e;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    border-left: 4px solid #e53e3e;
+}
+
+@media (max-width: 600px) {
+    .application-form .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

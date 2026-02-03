@@ -21,17 +21,25 @@ const Register = () => {
     const [success, setSuccess] = useState("");
     const [emailInfo, setEmailInfo] = useState(null);
 
+    // Custom password validator matching the checklist
+    const validatePassword = (value) => {
+        if (!value) return "Password is required";
+        if (value.length < 8) return "Must be at least 8 characters";
+        if (!/[A-Z]/.test(value)) return "Must include an uppercase letter";
+        if (!/[a-z]/.test(value)) return "Must include a lowercase letter";
+        if (!/[^A-Za-z0-9]/.test(value)) return "Must include a special character";
+        return "";
+    };
+
     const validationRules = {
         name: validators.required("Full Name"),
         email: validators.konguEmail,
-        password: composeValidators(validators.password, validators.minLength(6, "Password")),
+        password: validatePassword,
         confirmPassword: validators.confirmPassword,
     };
 
     const { values, errors, handleChange, handleBlur, handleSubmit, isSubmitting } =
         useForm({ name: "", email: "", password: "", confirmPassword: "" }, validationRules);
-
-    const strength = validators.passwordStrength(values.password);
 
     const handleEmailChange = (e) => {
         handleChange(e);
@@ -133,16 +141,18 @@ const Register = () => {
                                 required
                             />
                             {values.password && (
-                                <div className="strength-container">
-                                    <div className="strength-bar-bg">
-                                        <div className="strength-bar-fill" style={{
-                                            width: `${(strength.score + 1) * 20}%`,
-                                            background: strength.color
-                                        }} />
+                                <div style={{ marginTop: '12px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                    <div style={{ fontSize: '10px', color: values.password.length >= 8 ? 'var(--accent-olive)' : 'var(--text-grey)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: values.password.length >= 8 ? 'bold' : 'normal' }}>
+                                        <span>{values.password.length >= 8 ? '✓' : '○'}</span> 8+ Characters
                                     </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px' }}>
-                                        <span style={{ color: strength.color, fontWeight: '700' }}>{strength.label.toUpperCase()}</span>
-                                        <span style={{ color: 'var(--text-grey)' }}>{strength.advice}</span>
+                                    <div style={{ fontSize: '10px', color: /[A-Z]/.test(values.password) ? 'var(--accent-olive)' : 'var(--text-grey)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: /[A-Z]/.test(values.password) ? 'bold' : 'normal' }}>
+                                        <span>{/[A-Z]/.test(values.password) ? '✓' : '○'}</span> 1 Uppercase
+                                    </div>
+                                    <div style={{ fontSize: '10px', color: /[a-z]/.test(values.password) ? 'var(--accent-olive)' : 'var(--text-grey)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: /[a-z]/.test(values.password) ? 'bold' : 'normal' }}>
+                                        <span>{/[a-z]/.test(values.password) ? '✓' : '○'}</span> 1 Lowercase
+                                    </div>
+                                    <div style={{ fontSize: '10px', color: /[^A-Za-z0-9]/.test(values.password) ? 'var(--accent-olive)' : 'var(--text-grey)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: /[^A-Za-z0-9]/.test(values.password) ? 'bold' : 'normal' }}>
+                                        <span>{/[^A-Za-z0-9]/.test(values.password) ? '✓' : '○'}</span> 1 Special Char
                                     </div>
                                 </div>
                             )}

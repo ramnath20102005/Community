@@ -148,6 +148,11 @@
     z-index: 1000;
 }
 
+.admin-actions {
+    display: flex;
+    gap: 10px;
+}
+
 .promotion-modal {
     background: var(--bg-ivory);
     padding: 40px;
@@ -182,4 +187,75 @@
     text-transform: uppercase;
     letter-spacing: 2px;
     color: var(--text-muted);
+}
+
+/* --- Responsive --- */
+@media (max-width: 1023px) {
+    .analytics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .admin-tabs {
+        gap: 20px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-tab {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 767px) {
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .analytics-card {
+        padding: 2rem;
+    }
+
+    .analytics-value {
+        font-size: 36px;
+    }
+
+    .admin-actions {
+        flex-direction: column;
+        width: 100%;
+        display: flex;
+        gap: 10px;
+    }
+
+    .admin-actions button {
+        width: 100%;
+        margin-right: 0 !important;
+    }
+
+    .promotion-modal {
+        padding: 20px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-tab {
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .role-badge {
+        padding: 2px 6px;
+        font-size: 9px;
+    }
+
+    .club-member-badge {
+        margin-left: 0;
+        margin-top: 4px;
+        display: inline-block;
+    }
 }

@@ -1,20 +1,23 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import userService from "../../services/user.service";
+import postService from "../../services/post.service";
 import Card from "../../components/Card";
 import Loader from "../../components/Loader";
 import ErrorMessage from "../../components/ErrorMessage";
 import SuccessMessage from "../../components/SuccessMessage";
+import { Database, RefreshCw, Trash2 } from "lucide-react";
 import "../page_css/Dashboard.css";
 import "../page_css/Admin.css";
 
 const AdminDashboard = () => {
     const { user } = useAuth();
     const [users, setUsers] = useState([]);
+    const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-    const [activeTab, setActiveTab] = useState("users"); // 'analytics' or 'users'
+    const [activeTab, setActiveTab] = useState("users"); // 'analytics', 'users', 'posts'
     const [searchTerm, setSearchTerm] = useState("");
     const [filterRole, setFilterRole] = useState("ALL");
 
@@ -24,17 +27,25 @@ const AdminDashboard = () => {
     const [clubName, setClubName] = useState("");
     const [position, setPosition] = useState("Member");
 
+    // Post Moderation States
+    const [postSearch, setPostSearch] = useState("");
+    const [filterPostType, setFilterPostType] = useState("ALL");
+
     useEffect(() => {
-        fetchUsers();
+        fetchData();
     }, []);
 
-    const fetchUsers = async () => {
+    const fetchData = async () => {
         try {
             setLoading(true);
-            const data = await userService.getAllUsers();
-            setUsers(data);
+            const [usersData, postsData] = await Promise.all([
+                userService.getAllUsers(),
+                postService.getAllPosts()
+            ]);
+            setUsers(usersData);
+            setPosts(postsData);
         } catch (err) {
-            setError("Failed to load users data.");
+            setError("Failed to load community data.");
         } finally {
             setLoading(false);
         }
@@ -47,7 +58,7 @@ const AdminDashboard = () => {
             await userService.promoteToClubMember(selectedUser._id, clubName, position);
             setSuccess(`Successfully promoted ${selectedUser.name}!`);
             setShowPromoModal(false);
-            fetchUsers();
+            fetchData();
             setClubName("");
             setPosition("Member");
         } catch (err) {
@@ -63,9 +74,23 @@ const AdminDashboard = () => {
             setLoading(true);
             await userService.demoteUser(userId);
             setSuccess("User demoted successfully.");
-            fetchUsers();
+            fetchData();
         } catch (err) {
             setError("Failed to demote user.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeletePost = async (postId) => {
+        if (!window.confirm("Moderator Action: Remove this publication permanently?")) return;
+        try {
+            setLoading(true);
+            await postService.deletePost(postId);
+            setSuccess("Publication removed successfully.");
+            setPosts(prev => prev.filter(p => p._id !== postId));
+        } catch (err) {
+            setError("Failed to delete post.");
         } finally {
             setLoading(false);
         }
@@ -80,12 +105,19 @@ const AdminDashboard = () => {
 
     const filteredUsers = users.filter(u => {
         const matchesSearch = u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            u.email.toLowerCase().includes(searchTerm.toLowerCase());
+            (u.department || "").toLowerCase().includes(searchTerm.toLowerCase());
         const matchesRole = filterRole === 'ALL' || u.role === filterRole;
         const matchesClub = filterRole === 'CLUB' ? u.isClubMember : true;
 
         if (filterRole === 'CLUB') return matchesSearch && u.isClubMember;
         return matchesSearch && matchesRole;
+    });
+
+    const filteredPosts = posts.filter(p => {
+        const matchesSearch = (p.author?.name || "Academic").toLowerCase().includes(postSearch.toLowerCase()) ||
+            (p.author?.department || "").toLowerCase().includes(postSearch.toLowerCase());
+        const matchesType = filterPostType === 'ALL' || p.type === filterPostType;
+        return matchesSearch && matchesType;
     });
 
     const handleBackup = async () => {
@@ -108,13 +140,15 @@ const AdminDashboard = () => {
                 <div>
                     <span className="badge-category">System Administration</span>
                     <h1>Admin Console</h1>
-                    <p>Manage users, analytics, and permissions.</p>
+                    <p>Manage users, analytics, and community content.</p>
                 </div>
                 <div className="admin-actions">
-                    <button className="btn btn-primary" onClick={handleBackup} style={{ marginRight: '10px' }}>
-                         💾 Backup Data
+                    <button className="btn btn-primary" onClick={handleBackup} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                         <Database size={16} /> Backup Data
                     </button>
-                    <button className="btn btn-outline" onClick={fetchUsers}>Refresh Data</button>
+                    <button className="btn btn-outline" onClick={fetchData} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <RefreshCw size={16} /> Refresh
+                    </button>
                 </div>
             </div>
 
@@ -129,6 +163,12 @@ const AdminDashboard = () => {
                     User Management
                 </button>
                 <button
+                    className={`admin-tab ${activeTab === 'posts' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('posts')}
+                >
+                    Content Moderation
+                </button>
+                <button
                     className={`admin-tab ${activeTab === 'analytics' ? 'active' : ''}`}
                     onClick={() => setActiveTab('analytics')}
                 >
@@ -136,7 +176,7 @@ const AdminDashboard = () => {
                 </button>
             </div>
 
-            {activeTab === 'analytics' ? (
+            {activeTab === 'analytics' && (
                 <div className="analytics-view fade-in">
                     <div className="analytics-grid">
                         <div className="analytics-card">
@@ -171,12 +211,75 @@ const AdminDashboard = () => {
                         </div>
                     </Card>
                 </div>
-            ) : (
+            )}
+
+            {activeTab === 'posts' && (
+                <div className="content-moderation-view fade-in">
+                    <div className="filters-bar" style={{ display: 'flex', gap: '20px', marginBottom: '30px' }}>
+                        <input
+                            type="text"
+                            placeholder="Search by name or department..."
+                            value={postSearch}
+                            onChange={(e) => setPostSearch(e.target.value)}
+                            style={{ flex: 2 }}
+                        />
+                        <select
+                            value={filterPostType}
+                            onChange={(e) => setFilterPostType(e.target.value)}
+                            style={{ flex: 1 }}
+                        >
+                            <option value="ALL">All Content</option>
+                            <option value="EVENT">Events & Experience</option>
+                            <option value="JOB_POST">Career Opportunities</option>
+                        </select>
+                    </div>
+
+                    <div className="user-table-container">
+                        <table className="user-table">
+                            <thead>
+                                <tr>
+                                    <th>Title & Publication</th>
+                                    <th>Author</th>
+                                    <th>Status/Type</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredPosts.map(p => (
+                                    <tr key={p._id}>
+                                        <td style={{ maxWidth: '300px' }}>
+                                            <div style={{ fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.title}</div>
+                                            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Posted on: {new Date(p.createdAt).toLocaleDateString()}</div>
+                                        </td>
+                                        <td>
+                                            <div style={{ fontSize: '13px' }}>{p.author?.name || 'Academic System'}</div>
+                                            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{p.author?.role || 'SYSTEM'}</div>
+                                        </td>
+                                        <td>
+                                            <span className={`role-badge ${p.type === 'JOB_POST' ? 'ALUMNI' : 'STUDENT'}`} style={{ fontSize: '10px' }}>
+                                                {p.type === 'JOB_POST' ? 'CAREER' : 'COMMUNITY'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button className="btn btn-outline btn-sm" style={{ color: 'red', borderColor: 'rgba(255,0,0,0.2)', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={() => handleDeletePost(p._id)}>
+                                                <Trash2 size={12} /> Remove Post
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        {filteredPosts.length === 0 && <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No publications match your criteria.</div>}
+                    </div>
+                </div>
+            )}
+
+            {activeTab === 'users' && (
                 <div className="user-management-view fade-in">
                     <div className="filters-bar" style={{ display: 'flex', gap: '20px', marginBottom: '30px' }}>
                         <input
                             type="text"
-                            placeholder="Search by name or email..."
+                            placeholder="Search by name or department..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             style={{ flex: 2 }}
