@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const { protect } = require('../middleware/auth');
+const { generateFileUrl, generateMultipleFileUrls } = require('../utils/urlHelper');
 
 // Configure Storage
 const storage = multer.diskStorage({
@@ -38,9 +39,8 @@ router.post('/', protect, upload.single('file'), (req, res) => {
         return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    // Construct full URL (in production this would be Cloudinary/S3 URL)
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
-    const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
+    // Construct full URL accessible from frontend using centralized helper
+    const fileUrl = generateFileUrl(req, req.file.filename);
 
     res.json({
         message: 'File uploaded successfully',
@@ -58,13 +58,8 @@ router.post('/multiple', protect, upload.array('files', 5), (req, res) => {
         return res.status(400).json({ message: 'No files uploaded' });
     }
 
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
-    const urls = req.files.map(file => ({
-        url: `${baseUrl}/uploads/${file.filename}`,
-        filename: file.filename,
-        originalName: file.originalname,
-        mimetype: file.mimetype
-    }));
+    // Construct URLs accessible from frontend using centralized helper
+    const urls = generateMultipleFileUrls(req, req.files);
 
     res.json({
         message: 'Files uploaded successfully',
