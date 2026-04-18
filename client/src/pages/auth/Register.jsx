@@ -8,6 +8,7 @@ import authService from "../../services/auth.service";
 import ErrorMessage from "../../components/ErrorMessage";
 import SuccessMessage from "../../components/SuccessMessage";
 import Loader from "../../components/Loader";
+import ApiTest from "../../components/ApiTest";
 import "../page_css/Register.css";
 
 /**
@@ -46,10 +47,18 @@ const Register = () => {
     };
 
     const onSubmit = async (formValues) => {
+        console.log("🚀 [REGISTER] Starting registration process", {
+            name: formValues.name,
+            email: formValues.email,
+            timestamp: new Date().toISOString()
+        });
+
         try {
             setError("");
             setSuccess("");
 
+            console.log("📡 [REGISTER] Calling authService.register");
+            
             // Backend registration
             const response = await authService.register({
                 name: formValues.name,
@@ -57,20 +66,47 @@ const Register = () => {
                 password: formValues.password
             });
 
+            console.log("✅ [REGISTER] Registration successful", {
+                user: response.user,
+                hasToken: !!response.token
+            });
+
             setSuccess("WELCOME TO THE COMMUNITY");
 
             setTimeout(() => {
+                console.log("🔄 [REGISTER] Redirecting to /general");
                 register(response.user, response.token);
                 navigate("/general");
             }, 1200);
         } catch (err) {
-            console.error("Registration failed:", err);
-            setError(err.response?.data?.message || "Registration failed. Server error.");
+            console.error("❌ [REGISTER] Registration failed:", {
+                error: err,
+                message: err.message,
+                response: err.response,
+                status: err.response?.status,
+                data: err.response?.data,
+                timestamp: new Date().toISOString()
+            });
+            
+            // More detailed error handling
+            let errorMessage = "Registration failed. Server error.";
+            if (err.response?.data?.message) {
+                errorMessage = err.response.data.message;
+            } else if (err.message) {
+                errorMessage = err.message;
+            } else if (err.code === 'ECONNREFUSED') {
+                errorMessage = "Cannot connect to server. Please check your internet connection.";
+            } else if (err.code === 'NETWORK_ERROR') {
+                errorMessage = "Network error. Please try again.";
+            }
+            
+            setError(errorMessage);
         }
     };
 
     return (
         <div className="register-page">
+            <ApiTest />
             <div className="register-card">
                 <header className="register-header">
                     <h1>CREATE ACCOUNT</h1>
@@ -80,7 +116,10 @@ const Register = () => {
                 {error && <ErrorMessage message={error} onClose={() => setError("")} />}
                 {success && <SuccessMessage message={success} />}
 
-                <form onSubmit={handleSubmit(onSubmit)} className="register-form">
+                <form onSubmit={(e) => {
+                    console.log("📝 [REGISTER] Form submit triggered");
+                    handleSubmit(onSubmit)(e);
+                }} className="register-form">
                     <div className="register-form-group">
                         <label>FULL NAME *</label>
                         <input

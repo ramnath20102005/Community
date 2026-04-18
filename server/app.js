@@ -7,11 +7,23 @@ require("dotenv").config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// Middleware - CORS configuration for EC2 deployment
+const corsOptions = {
+  origin: [
+    'http://localhost:3000',
+    'http://13.60.163.36:3000',
+    'http://13.60.163.36',
+    'http://127.0.0.1:3000'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ limit: '25mb', extended: true }));
-app.use(morgan("dev"));
+app.use(morgan("combined")); // Use combined for detailed logging
 
 // Serve static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
