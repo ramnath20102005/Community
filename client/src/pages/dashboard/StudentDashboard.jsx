@@ -73,7 +73,7 @@ const StudentDashboard = () => {
 
             <div className="main-content">
                 <div className="section-title-wrapper">
-                    <h2 className="section-title">Recentsssss Activity</h2>
+                    <h2 className="section-title">Recents Activity</h2>
                     <Link to="/general" className="view-all-link">view all →</Link>
                 </div>
 
