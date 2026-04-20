@@ -13,6 +13,8 @@ const corsOptions = {
     'http://localhost:3000',
     'http://13.60.163.36:3000',
     'http://13.60.163.36',
+    'http://16.170.245.52:3000',
+    'http://16.170.245.52',
     'http://127.0.0.1:3000'
   ],
   credentials: true,
