@@ -6,7 +6,7 @@
 const getFrontendUrl = (req) => {
     // In production, frontend runs on port 3000, backend on 5000
     if (process.env.NODE_ENV === 'production') {
-        return 'http://13.60.163.36:3000';
+        return 'http://16.170.245.52:3000';
     }
     
     // In development, replace backend port with frontend port
@@ -17,7 +17,7 @@ const getFrontendUrl = (req) => {
 const getBackendUrl = (req) => {
     // In production, backend runs on port 5000
     if (process.env.NODE_ENV === 'production') {
-        return 'http://13.60.163.36:5000';
+        return 'http://16.170.245.52:5000';
     }
     
     // In development, use current host
